@@ -18,7 +18,7 @@ body {
 /* 메인 컨테이너 */
 .container {
     width: 100%;
-    max-width: 1300px; /* 좌석이 넓어졌으므로 컨테이너 최대 너비도 소폭 확장 */
+    max-width: 1550px; /* [수정] 기존 1300px -> 1550px로 가로폭 시원하게 확장 */
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
@@ -63,28 +63,28 @@ body {
 /* 콘텐츠 영역 분할 */
 .main-content {
     display: grid;
-    grid-template-columns: 1fr 360px; /* 좌측 배치도 영역 / 우측 입력 폼 너비(360px) */
-    min-height: 700px;
+    grid-template-columns: 1fr 380px; /* [수정] 폼 너비도 밸런스를 맞춰 380px로 살짝 확장 */
+    min-height: 750px;
 }
 
-/* [좌측] 좌석 선택 구역 (너비 확장 및 중앙 정렬 보완) */
+/* [좌측] 좌석 선택 구역 */
 .booking-zone {
     background-color: #2a3142;
-    padding: 40px 20px;
+    padding: 40px 30px;
     display: flex;
     flex-direction: column;
-    align-items: center; /* 무대와 배치도 전체를 가로축 정중앙 정렬 */
+    align-items: center; 
     justify-content: flex-start;
-    overflow-x: auto; /* 화면이 작아지면 배치도 영역 내에서만 스크롤바 생성 */
+    overflow-x: auto; 
 }
 .stage {
     background: #111622;
     color: #8892a0;
     text-align: center;
     width: 100%;
-    max-width: 600px; /* 무대 너비를 좌석 30번 라인에 맞춰 확장 */
-    padding: 10px;
-    font-size: 13px;
+    max-width: 800px; /* [수정] 배치도가 넓어진 만큼 무대 가로 너비도 함께 확장 */
+    padding: 12px;
+    font-size: 14px;
     font-weight: bold;
     letter-spacing: 4px;
     border-radius: 4px;
@@ -94,12 +94,12 @@ body {
 .seating-container {
     display: flex;
     flex-direction: column;
-    align-items: center; /* 내부 요소 정중앙 정렬 */
+    align-items: center; 
     width: 100%;
-    min-width: 900px; /* 30번까지의 좌석이 찌그러지지 않도록 최소 너비 확보 */
+    min-width: 1050px; /* [수정] 좌석이 커졌으므로 최소 확보 너비를 1050px로 변경 */
 }
 
-/* [수정] 1층 (Floor 1) 글자와 구분선이 나타나는 타이틀 영역을 완전히 숨깁니다 */
+/* 1층 (Floor 1) 타이틀 영역 숨김 유지 */
 .floor-title {
     display: none !important;
 }
@@ -107,39 +107,39 @@ body {
 .floor {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px; /* [수정] 줄과 줄 사이 간격을 6px -> 8px로 미세 조정 */
     width: 100%;
-    align-items: center; /* 모든 좌석 라인을 중앙으로 정렬 */
+    align-items: center; 
 }
 
 /* 행(Row) 배열 레이아웃 */
 .row-container {
     display: flex;
     align-items: center;
-    justify-content: center; /* 각 줄 자체를 가로 중앙 배치 */
+    justify-content: center; 
     width: 100%;
-    max-width: 900px; /* 30개의 좌석과 라벨이 여유롭게 들어가는 공간 */
+    max-width: 1100px; 
 }
 .row-label {
-    width: 50px; /* '1열', '10열' 글자가 깔끔하게 들어가는 여백 */
+    width: 55px; /* [수정] 좌석이 커진 비율에 맞춰 라벨 여백 확보 */
     color: #a0aec0;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
     text-align: left;
 }
 .seats-row {
     display: flex;
-    gap: 4px;
-    justify-content: center; /* 좌석 버튼들을 줄 내부에서 중앙 정렬 */
+    gap: 5px; /* [수정] 좌석간 간격을 4px -> 5px로 늘려 답답함 해소 */
+    justify-content: center; 
 }
 
 /* 💺 좌석 버튼 스타일 클래스들 */
 .seat {
-    width: 25px;
-    height: 25px;
+    width: 29px;        /* [수정] 기존 25px -> 29px로 확대하여 가독성 업 */
+    height: 29px;       /* [수정] 기존 25px -> 29px로 확대하여 가독성 업 */
     border: none;
-    border-radius: 3px;
-    font-size: 10px;
+    border-radius: 4px;
+    font-size: 11px;    /* [수정] 크기가 커진 만큼 글자 크기도 10px -> 11px로 확장 */
     font-weight: bold;
     cursor: pointer;
     display: flex;
@@ -149,11 +149,11 @@ body {
 }
 .available { background-color: #8364e2; color: #fff; }
 .available:hover { background-color: #6c4fd1; transform: scale(1.05); }
-.wheelchair { background-color: #00b894; color: #fff; }
+.wheelchair { background-color: #00b894; color: #fff; font-size: 12px; } /* 휠체어 아이콘도 잘 보이게 보정 */
 .selected { background-color: #ff3838 !important; color: #fff !important; font-weight: bold; transform: scale(1.1); box-shadow: 0 0 8px rgba(255,56,56,0.6); }
 .reserved { background-color: #4b5563; color: #718096; cursor: not-allowed; }
 
-/* [우측] 정보 입력 및 결제/예약 구역 (고급화) */
+/* [우측] 정보 입력 및 결제/예약 구역 */
 .info-zone {
     background-color: #ffffff;
     border-left: 1px solid #e2e8f0;
@@ -232,7 +232,7 @@ body {
 .summary-item strong { color: #0f172a; font-size: 15px; font-weight: 700; }
 #ticketCount { color: #ff3838; font-size: 16px; }
 #selectedSeatsDisplay { 
-    max-width: 180px;
+    max-width: 200px;
     text-align: right;
     word-break: break-all;
     font-size: 13px;
