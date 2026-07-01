@@ -76,6 +76,7 @@ body {
     align-items: center; 
     justify-content: flex-start;
     overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; /* 모바일 부드러운 스크롤 */
 }
 .stage {
     background: #111622;
@@ -90,6 +91,7 @@ body {
     border-radius: 4px;
     margin-bottom: 50px;
     box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+    flex-shrink: 0;
 }
 .seating-container {
     display: flex;
@@ -126,6 +128,7 @@ body {
     font-size: 13px;
     font-weight: bold;
     text-align: left;
+    flex-shrink: 0;
 }
 .seats-row {
     display: flex;
@@ -133,13 +136,14 @@ body {
     justify-content: center; 
 }
 
-/* [추가] 자바스크립트 인라인 스타일 대체용 셀 및 통로 디자인 정의 */
+/* 자바스크립트 인라인 스타일 대체용 셀 및 통로 디자인 정의 */
 .seat-cell {
     width: 29px;
     height: 29px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 .aisle-space {
     width: 24px;
@@ -354,7 +358,6 @@ body {
 }
 .modal-close:hover { color: #fff; }
 
-/* [추가] 모달 내부 정렬을 기본 메인 레이아웃과 100% 동치시켜 무대 뒤틀림 방지 */
 .modal-booking-zone {
     width: 100%;
     display: flex;
@@ -362,10 +365,11 @@ body {
     align-items: center;
     justify-content: flex-start;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* ==========================================================================
-   📱 [적응형 완벽 추가] 모바일 및 태블릿을 위한 미디어 쿼리 최적화 구역
+   📱 [적응형 최적화] 모바일 터치 편의성을 위한 가로 스크롤 레이아웃으로 변경
    ========================================================================== */
 
 @media (max-width: 1200px) {
@@ -383,43 +387,37 @@ body {
         gap: 12px;
         text-align: center;
     }
+    .legend {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 }
 
 @media (max-width: 768px) {
-    /* 모바일에서 30개 좌석이 무너지지 않고 깔끔하게 축소되도록 축소율(Scale down) 바인딩 */
+    /* [핵심 수정] 모바일에서 억지로 축소(Scale)하지 않고, 터치하기 좋은 29px 크기 유지 + 가로 스크롤 유도 */
     .seating-container {
-        min-width: 1000px; /* 고정 레이아웃 가로 정렬 보존 */
-        transform: scale(0.68); /* 화면 너비에 맞춰 요소를 균등하게 다운사이징 */
-        transform-origin: top center;
-        margin-bottom: -120px; /* 축소로 생기는 여백 상쇄 */
+        min-width: 1050px; 
+        transform: none !important; /* 강제 축소 제거 */
+        margin-bottom: 0 !important;
+        padding: 10px 0;
     }
     .booking-zone {
-        padding: 25px 10px;
+        padding: 20px 15px;
+        align-items: flex-start; /* 가로 스크롤 시 정렬 기준선 보정 */
     }
     .stage {
-        margin-bottom: 25px;
+        margin-bottom: 30px;
+        max-width: 1050px; /* 좌석 가로폭과 일치시켜 스크롤 시 같이 움직이도록 설정 */
     }
     .modal-content {
         padding: 20px 15px;
+        width: 95%;
     }
-    /* 모달 내부 좌석 배치도 동일 스케일 조절 */
-    .modal-booking-zone .seating-container {
-        transform: scale(0.62);
-        margin-bottom: -140px;
-    }
-}
-
-@media (max-width: 480px) {
-    .seating-container {
-        transform: scale(0.42);
-        margin-bottom: -220px;
+    .modal-booking-zone {
+        align-items: flex-start;
     }
     .modal-booking-zone .seating-container {
-        transform: scale(0.38);
-        margin-bottom: -240px;
-    }
-    .row-label {
-        width: 35px;
-        font-size: 15px; /* 확대 효과 방지 */
+        transform: none !important; /* 모달 내부 강제 축소 제거 */
+        margin-bottom: 0 !important;
     }
 }
