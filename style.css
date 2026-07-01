@@ -1,30 +1,149 @@
-body { font-family: 'Malgun Gothic', sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 20px; }
-.container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-h1, h3 { text-align: center; }
+/* 기본 초기화 및 폰트 세팅 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
 
-/* 폼 스타일 */
-.form-section { background: #f1f3f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-.input-group { margin-bottom: 12px; }
-.input-group label { display: inline-block; width: 60px; font-weight: bold; }
-.input-group input { padding: 8px; width: 200px; border: 1px solid #ced4da; border-radius: 4px; }
-.info-group p { margin: 5px 0; }
-.btn-submit { display: block; width: 100%; padding: 12px; background: #228be6; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
-.btn-submit:hover { background: #1c7ed6; }
+/* 메인 컨테이너 - 예매창 스타일 */
+.container {
+    width: 100%;
+    max-width: 1100px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
 
-/* 범례 및 무대 */
-.legend { text-align: center; margin-bottom: 20px; }
-.legend-item { margin: 0 10px; font-size: 14px; }
-.box { display: inline-block; width: 16px; height: 16px; vertical-align: middle; margin-right: 4px; border-radius: 3px; }
-.stage { background: #343a40; color: white; text-align: center; padding: 10px; font-weight: bold; border-radius: 4px; margin: 20px auto 40px; max-width: 400px; }
+/* 상단 타이틀 바 */
+.header-bar {
+    background-color: #1c2434; /* 인터파크 느낌의 딥네이비 */
+    color: #ffffff;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #101622;
+}
+.header-bar h1 {
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: -0.5px;
+}
 
-/* 좌석 배치도 디자인 */
-.floor { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.row-container { display: flex; align-items: center; width: 100%; max-width: 500px; }
-.row-label { width: 50px; font-weight: bold; font-size: 14px; }
-.seats-row { display: flex; gap: 4px; flex-grow: 1; }
+/* 범례 (Legend) */
+.legend {
+    display: flex;
+    gap: 15px;
+}
+.legend-item {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    color: #ccc;
+}
+.box {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    margin-right: 5px;
+    border-radius: 2px;
+}
 
-.seat { width: 32px; height: 32px; border: 1px solid #adb5bd; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.available { background-color: #a3e4d7; color: #117a65; }
-.selected { background-color: #f1c40f; color: #7d6608; border-color: #d4ac0d; }
-.reserved { background-color: #e9ecef; color: #adb5bd; border-color: #dee2e6; cursor: not-allowed; }
-.wheelchair { background-color: #f1948a; color: #922b21; border-color: #ec7063; }
+/* 콘텐츠 영역 분할 (좌: 배치도 / 우: 예매 폼) */
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    min-height: 650px;
+}
+
+/* [좌측] 좌석 선택 구역 */
+.booking-zone {
+    background-color: #2a3142; /* 실제 예매창처럼 어두운 배경으로 좌석 몰입도 증가 */
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: auto;
+}
+.stage {
+    background: #111622;
+    color: #8892a0;
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    border-radius: 2px;
+    margin-bottom: 40px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+}
+.seating-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.floor-title {
+    color: #fff;
+    font-size: 14px;
+    margin: 15px 0 10px 0;
+    border-bottom: 1px solid #3f4a61;
+    width: 100%;
+    max-width: 520px;
+    padding-bottom: 5px;
+}
+.floor {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    align-items: center;
+}
+
+/* 행(Row) 배열 레이아웃 */
+.row-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 520px;
+}
+.row-label {
+    width: 45px;
+    color: #8892a0;
+    font-size: 11px;
+    font-weight: bold;
+}
+.seats-row {
+    display: flex;
+    gap: 3px;
+}
+
+/* 💺 좌석 버튼 스타일 클래스들 */
+.seat {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s ease;
+}
+/* 상태별 색상 (인터파크/Yes24 컬러 테마) */
+.available { background-color: #8364e2; color: #fff; } /* 선택 가능 (보라/블루 계열) */
+.available:hover { background-color: #6c4fd1; }
+.wheelchair { background-color: #00b894; color: #fff; } /* 장애인
