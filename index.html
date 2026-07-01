@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>공연 좌석 예매</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>2026 공연예매</h1>
+
+<p>
+남양주시 문화의집
+</p>
+
+</header>
+
+
+<div class="container">
+
+<section class="info">
+
+<h2>예매정보</h2>
+
+<input
+id="name"
+placeholder="이름">
+
+<input
+id="phone"
+placeholder="연락처">
+
+<select id="count">
+
+<option value="1">1매</option>
+<option value="2">2매</option>
+<option value="3">3매</option>
+<option value="4">4매</option>
+<option value="5">5매</option>
+
+</select>
+
+</section>
+
+<section class="legend">
+
+<div>
+<span class="seat available"></span>
+선택가능
+</div>
+
+<div>
+<span class="seat selected"></span>
+선택중
+</div>
+
+<div>
+<span class="seat reserved"></span>
+예약완료
+</div>
+
+<div>
+<span class="seat disabled"></span>
+없는좌석
+</div>
+
+<div>
+<span class="seat wheelchair">♿</span>
+장애인석
+</div>
+
+</section>
+
+
+<section>
+
+<h2>
+1층
+</h2>
+
+<div id="floor1"></div>
+
+<h2>
+2층
+</h2>
+
+<div id="floor2"></div>
+
+</section>
+
+<section class="bottom">
+
+<h3>선택한 좌석</h3>
+
+<div id="selectedSeats">
+
+없음
+
+</div>
+
+<button id="reserveBtn">
+
+예약하기
+
+</button>
+
+</section>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
