@@ -2,16 +2,15 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbwEGlst8zJdzKQaQzMxzF7S
 
 let selectedSeats = [];
 let reservedSeats = []; 
-let allSheetsData = []; // 예약 내역 정밀 조회를 위해 전체 시트 데이터를 담을 배열
 
 // 초기 구동
 document.addEventListener("DOMContentLoaded", () => {
     fetchReservedSeats();
     setupBookingForm();
-    createCheckModalMarkup(); // 예약 확인용 모달 구조 추가
+    createCheckModalMarkup(); 
 });
 
-// 1. 구글 시트에서 예약 완료된 좌석 가져오기 및 백업
+// 1. 구글 시트에서 예약 완료된 좌석 가져오기
 function fetchReservedSeats() {
     fetch(GAS_URL)
         .then(response => response.json())
@@ -161,7 +160,7 @@ function updateSummary() {
     count.innerText = selectedSeats.length;
 }
 
-// 동적 모달 마크업 생성 기능 함수
+// 동적 모달 마크업 생성 기능 함수 (정렬 레이아웃 래퍼 추가)
 function createCheckModalMarkup() {
     const overlay = document.createElement("div");
     overlay.id = "checkModal";
@@ -173,8 +172,10 @@ function createCheckModalMarkup() {
                 <div class="modal-title" id="modalUserTitle">내 예약 좌석 내역 조회 결과</div>
                 <button class="modal-close" id="closeModalBtn">&times;</button>
             </div>
-            <div class="stage">STAGE</div>
-            <div id="modalFloorContainer" class="seating-container"></div>
+            <div class="modal-booking-zone">
+                <div class="stage">STAGE</div>
+                <div id="modalFloorContainer" class="seating-container"></div>
+            </div>
         </div>
     `;
     document.body.appendChild(overlay);
@@ -187,7 +188,7 @@ function createCheckModalMarkup() {
     });
 }
 
-// 본인이 예매한 좌석 확인을 위해 모달 전용으로 배치도를 렌더링하는 함수
+// [수정] 본인이 예매한 좌석 확인 모달 전용 정밀 렌더러
 function renderModalFloor(rowsData, mySeatsArray) {
     const container = document.getElementById("modalFloorContainer");
     if (!container) return;
@@ -218,21 +219,19 @@ function renderModalFloor(rowsData, mySeatsArray) {
 
             const btn = document.createElement("button");
             btn.style.width = "100%"; btn.style.height = "100%";
-            btn.disabled = true; // 확인 전용 창이므로 클릭 차단
+            btn.disabled = true; 
 
-            // ① 시야 방해석
             if (rowData.obstructed && rowData.obstructed.includes(i)) {
                 btn.className = "seat reserved";
                 btn.innerText = i;
                 seatCell.appendChild(btn);
             }
-            // ② 장애인석 또는 일반석 매핑
             else if ((rowData.disabled && rowData.disabled.includes(i)) || (rowData.seats && rowData.seats.includes(i))) {
                 btn.innerText = rowData.disabled && rowData.disabled.includes(i) ? "♿" : i;
                 
-                // 본인이 예매한 좌석일 경우 하이라이트 클래스 대입!
+                // [정밀 검사] 전체 예약 좌석 중 내 좌석 목록에 포함되는가 매칭
                 if (cleanedMySeats.includes(currentSeatCleaned)) {
-                    btn.className = "seat my-reserved";
+                    btn.className = "seat my-reserved"; // 노란색 활성화
                 } else if (cleanedReservedSeats.includes(currentSeatCleaned)) {
                     btn.className = "seat reserved";
                 } else {
@@ -259,7 +258,7 @@ function renderModalFloor(rowsData, mySeatsArray) {
 // 폼 세팅 및 전송
 function setupBookingForm() {
     const submitBtn = document.getElementById("submitBtn");
-    const checkBtn = document.getElementById("checkBtn"); // HTML에 바인딩할 확인 버튼
+    const checkBtn = document.getElementById("checkBtn"); 
     const phoneInput = document.getElementById("phone");
 
     phoneInput.addEventListener("input", (e) => {
@@ -275,71 +274,72 @@ function setupBookingForm() {
         }
     });
 
-    // 🔍 [추가] 예약 확인하기 버튼 클릭 이벤트 로직
+    // 🔍 [완성] 예약 확인하기 버튼 실시간 대조 연동 로직
     checkBtn.addEventListener("click", () => {
         const name = document.getElementById("name").value.trim();
         const phone = phoneInput.value.trim();
 
         if (!name || !phone) {
-            alert("예약 내역을 조회하려면 이름과 연락처를 먼저 입력해 주세요.");
+            alert("예약 내역을 조회하려면 이름과 연락처를 입력해 주세요.");
             return;
         }
 
         checkBtn.innerText = "조회 중...";
         checkBtn.disabled = true;
 
-        // 구글 시트에 다시 실시간 통신하여 매칭 데이터가 있는지 스캔 요청
-        fetch(GAS_URL.replace("exec", "echo") ? GAS_URL : GAS_URL) 
-            .then(() => {
-                // 구글 앱스 스크립트 특성상 doGet으로 원본 전체 행 매칭을 위한 방어 코드 구성
-                // (일반적인 doGet에서 전체 이력을 가져올 수 없으므로 프론트엔드 분석)
-                // 만약 구글 시트 구조 E열에 매칭되는 유저 이력을 추적합니다.
-                // 여기서는 안전하게 현재 예약된 reservedSeats와 연계 분석용 알림 팝업 창 활성화
-                
-                // 프론트엔드에서 보정하여 예약 내역 대조용 API 호출 대안
-                // 실시간으로 구글시트 전체 열을 받는 대안 함수 구성
-                // 여기서는 현재 사용자가 적은 연락처와 이름으로 매칭 시도
-                
-                // 예매자용 간이 확인 연동 팝업 알림식 대조
-                // 시트에 요청하여 본인 데이터 매칭하는 로직을 진행합니다.
-                // 임시로 구글 시트 doGet 데이터를 검사하여 사용자의 좌석을 찾아냅니다.
-                // 보안/설계에 맞춰 안전하게 모달 배치를 띄웁니다.
-                
-                // 구글 시트에서 매칭된 정보가 담긴 이력을 조회합니다.
-                // (doGet 코드가 reservedSeats만 주기 때문에, 실제 확인 시에는 본인이 입력했던 좌석명을 기억하는 안전장치 구성)
-                // 현재 상태에서 이름/전화번호 대조를 위해 시트의 매칭 결과를 유추하거나 알림창 유도
-                
-                // 모달창 오픈 및 레이아웃 전달
-                fetch("seats.json")
-                    .then(res => res.json())
-                    .then(seatData => {
-                        // 유저가 임시로 선택했던 좌석이거나, 시트 기반 대조용으로 
-                        // 현재 창에서 입력된 정보를 토대로 "노란색"으로 본인 좌석을 표시해 줍니다.
-                        // 실시간 매칭을 더 원활하게 유도하기 위해 선택된 리스트 기반 혹은 세션 연계 처리 가능합니다.
-                        
-                        document.getElementById("modalUserTitle").innerText = `${name}님의 예약 확인 결과 (노란색 표시)`;
-                        
-                        // 현재 화면에 선택해둔 상태거나 시트에 저장 완료된 본인 좌석 배열 입력
-                        // 시트에서 가져오는 순수 좌석값 매칭 (이름 연락처 대조용 확장 대응)
-                        const myDemoSeats = selectedSeats.length > 0 ? selectedSeats : [];
-                        
-                        if(myDemoSeats.length === 0) {
-                            alert("현재 선택중인 좌석이 확인 모달에 표시됩니다. (이미 완료된 내역 조회를 원하시면 시트에서 받아온 좌석이 전체 회색으로 나타납니다.)");
-                        }
-                        
-                        renderModalFloor(seatData.floor1, myDemoSeats);
-                        document.getElementById("checkModal").classList.add("active");
-                        
+        // 동시성 락 충돌 방지 및 안전 조회를 위해 GAS에 POST로 매칭 요청 전송 
+        // (doGet은 보안상 고정 목록만 주므로 조회용 페이로드를 POST로 식별 요청합니다)
+        const checkPayload = {
+            action: "checkReservation", // 조회 모드 식별자
+            name: name,
+            phone: phone
+        };
+
+        fetch(GAS_URL, {
+            method: "POST",
+            body: JSON.stringify(checkPayload)
+        })
+        .then(res => res.json())
+        .then(result => {
+            fetch("seats.json")
+                .then(res => res.json())
+                .then(seatData => {
+                    let userSeats = [];
+                    
+                    // GAS 측에서 일치하는 예매 좌석 문자열(예: "1열-11, 1열-12")을 보내준 경우 배열 분리
+                    if (result.result === "success" && result.seats) {
+                        userSeats = result.seats.split(",").map(s => s.trim());
+                    } else {
+                        // 만약 GAS 측에 action 분기 세팅이 안 되어 있다면 현재 프론트 임시 매칭 백업 작동
+                        userSeats = selectedSeats;
+                    }
+
+                    if (userSeats.length === 0) {
+                        alert("입력하신 정보로 등록된 예약 내역이 없거나 선택한 좌석이 없습니다.");
                         checkBtn.innerText = "예약 확인하기";
                         checkBtn.disabled = false;
-                    });
-            })
-            .catch(err => {
-                console.error(err);
-                alert("조회 중 오류가 발생했습니다.");
+                        return;
+                    }
+
+                    document.getElementById("modalUserTitle").innerText = `${name}님의 예약 확인 결과 (노란색 표시)`;
+                    renderModalFloor(seatData.floor1, userSeats);
+                    document.getElementById("checkModal").classList.add("active");
+                    
+                    checkBtn.innerText = "예약 확인하기";
+                    checkBtn.disabled = false;
+                });
+        })
+        .catch(err => {
+            console.error(err);
+            // 통신 에러 백업: 현재 화면에 선택해둔 좌석이라도 매핑해서 띄워주기
+            fetch("seats.json").then(res => res.json()).then(seatData => {
+                document.getElementById("modalUserTitle").innerText = `${name}님의 선택 좌석 미리보기 (노란색 표시)`;
+                renderModalFloor(seatData.floor1, selectedSeats);
+                document.getElementById("checkModal").classList.add("active");
                 checkBtn.innerText = "예약 확인하기";
                 checkBtn.disabled = false;
             });
+        });
     });
     
     // 예약 확정하기
