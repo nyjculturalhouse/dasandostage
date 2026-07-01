@@ -9,16 +9,18 @@ document.addEventListener("DOMContentLoaded", () => {
     setupBookingForm();
 });
 
-// 1. 구글 시트에서 예약 완료된 좌석 가져오기
+// 1. 구글 시트에서 예약 완료된 좌석 가져오기 (데이터 타입 예외 처리 추가)
 function fetchReservedSeats() {
     fetch(GAS_URL)
         .then(response => response.json())
         .then(data => {
-            reservedSeats = data;
+            // 받아온 데이터가 진짜 배열 형태가 맞는지 검사 후 저장
+            reservedSeats = Array.isArray(data) ? data : [];
             loadSeatLayout(); // 예약 내역 받은 후 배치도 로드
         })
         .catch(err => {
             console.error("좌석 정보를 불러오지 못했습니다.", err);
+            reservedSeats = []; // 에러 시 빈 배열로 초기화하여 다음 로직 보호
             loadSeatLayout(); // 에러 시에도 기본 배치도는 로드
         });
 }
@@ -33,11 +35,14 @@ function loadSeatLayout() {
         });
 }
 
-// 3. 배치도 렌더링 코어 함수 (다산아트홀 실제 1~30번 도면 매핑 구조)
+// 3. 배치도 렌더링 코어 함수 (includes 방어 코드 및 다산아트홀 실제 1~30번 매핑)
 function renderFloor(containerId, rowsData) {
     const container = document.getElementById(containerId);
     if (!container) return;
     container.innerHTML = ""; // 초기화
+    
+    // 혹시라도 reservedSeats가 배열이 아닐 경우를 대비한 2중 안전장치
+    const safeReservedSeats = Array.isArray(reservedSeats) ? reservedSeats : [];
     
     rowsData.forEach(rowData => {
         const rowDiv = document.createElement("div");
@@ -62,12 +67,12 @@ function renderFloor(containerId, rowsData) {
             }
             // ② 장애인석(휠체어석) 체크
             else if (rowData.disabled && rowData.disabled.includes(i)) {
-                const isReserved = reservedSeats.includes(seatId);
+                const isReserved = safeReservedSeats.includes(seatId);
                 createSeatButton(seatsRow, seatId, "♿", isReserved, "wheelchair");
             }
             // ③ 일반 예매 가능 좌석 체크
             else if (rowData.seats && rowData.seats.includes(i)) {
-                const isReserved = reservedSeats.includes(seatId);
+                const isReserved = safeReservedSeats.includes(seatId);
                 createSeatButton(seatsRow, seatId, i, isReserved, "available");
             }
             // ④ 통로 및 공백 공간 처리 (가로 비율 균등 유지)
