@@ -18,7 +18,7 @@ body {
 /* 메인 컨테이너 */
 .container {
     width: 100%;
-    max-width: 1550px; /* [수정] 기존 1300px -> 1550px로 가로폭 시원하게 확장 */
+    max-width: 1550px; 
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
@@ -63,7 +63,7 @@ body {
 /* 콘텐츠 영역 분할 */
 .main-content {
     display: grid;
-    grid-template-columns: 1fr 380px; /* [수정] 폼 너비도 밸런스를 맞춰 380px로 살짝 확장 */
+    grid-template-columns: 1fr 380px; 
     min-height: 750px;
 }
 
@@ -82,7 +82,7 @@ body {
     color: #8892a0;
     text-align: center;
     width: 100%;
-    max-width: 800px; /* [수정] 배치도가 넓어진 만큼 무대 가로 너비도 함께 확장 */
+    max-width: 800px; 
     padding: 12px;
     font-size: 14px;
     font-weight: bold;
@@ -96,10 +96,10 @@ body {
     flex-direction: column;
     align-items: center; 
     width: 100%;
-    min-width: 1050px; /* [수정] 좌석이 커졌으므로 최소 확보 너비를 1050px로 변경 */
+    min-width: 1050px; 
 }
 
-/* 1층 (Floor 1) 타이틀 영역 숨김 유지 */
+/* 1층 타이틀 영역 숨김 */
 .floor-title {
     display: none !important;
 }
@@ -107,7 +107,7 @@ body {
 .floor {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* [수정] 줄과 줄 사이 간격을 6px -> 8px로 미세 조정 */
+    gap: 8px; 
     width: 100%;
     align-items: center; 
 }
@@ -121,7 +121,7 @@ body {
     max-width: 1100px; 
 }
 .row-label {
-    width: 55px; /* [수정] 좌석이 커진 비율에 맞춰 라벨 여백 확보 */
+    width: 55px; 
     color: #a0aec0;
     font-size: 13px;
     font-weight: bold;
@@ -129,17 +129,17 @@ body {
 }
 .seats-row {
     display: flex;
-    gap: 5px; /* [수정] 좌석간 간격을 4px -> 5px로 늘려 답답함 해소 */
+    gap: 5px; 
     justify-content: center; 
 }
 
 /* 💺 좌석 버튼 스타일 클래스들 */
 .seat {
-    width: 29px;        /* [수정] 기존 25px -> 29px로 확대하여 가독성 업 */
-    height: 29px;       /* [수정] 기존 25px -> 29px로 확대하여 가독성 업 */
+    width: 29px;        
+    height: 29px;       
     border: none;
     border-radius: 4px;
-    font-size: 11px;    /* [수정] 크기가 커진 만큼 글자 크기도 10px -> 11px로 확장 */
+    font-size: 11px;    
     font-weight: bold;
     cursor: pointer;
     display: flex;
@@ -149,9 +149,12 @@ body {
 }
 .available { background-color: #8364e2; color: #fff; }
 .available:hover { background-color: #6c4fd1; transform: scale(1.05); }
-.wheelchair { background-color: #00b894; color: #fff; font-size: 12px; } /* 휠체어 아이콘도 잘 보이게 보정 */
+.wheelchair { background-color: #00b894; color: #fff; font-size: 12px; } 
 .selected { background-color: #ff3838 !important; color: #fff !important; font-weight: bold; transform: scale(1.1); box-shadow: 0 0 8px rgba(255,56,56,0.6); }
 .reserved { background-color: #4b5563; color: #718096; cursor: not-allowed; }
+
+/* 🌟 내가 예매한 좌석 하이럽 스타일 (확인 팝업용) */
+.my-reserved { background-color: #ffb300 !important; color: #000 !important; font-weight: bold; box-shadow: 0 0 10px #ffb300; }
 
 /* [우측] 정보 입력 및 결제/예약 구역 */
 .info-zone {
@@ -238,11 +241,14 @@ body {
     font-size: 13px;
 }
 
-/* 하단 예약 고정 버튼 */
+/* 하단 예약 및 확인 버튼 영역 */
 .action-area {
     padding: 24px;
     background: #ffffff;
     border-top: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 버튼 사이 간격 */
 }
 .btn-submit {
     display: block;
@@ -270,3 +276,62 @@ body {
     box-shadow: none;
     transform: none;
 }
+
+/* 🔍 예약 확인 버튼 전용 스타일 */
+.btn-check {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #1c2434;
+    color: #ffffff;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-check:hover {
+    background: #2d3748;
+}
+
+/* 🧱 예약 조회 모달 팝업 전체 스타일 */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+.modal-overlay.active {
+    opacity: 1; pointer-events: auto;
+}
+.modal-content {
+    background: #2a3142;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 1200px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #3f4a61;
+    padding-bottom: 15px;
+}
+.modal-title { color: #fff; font-size: 18px; font-weight: bold; }
+.modal-close {
+    background: transparent; border: none; color: #a0aec0;
+    font-size: 24px; cursor: pointer; font-weight: bold;
+}
+.modal-close:hover { color: #fff; }
