@@ -142,18 +142,42 @@ function updateSummary() {
     count.innerText = selectedSeats.length;
 }
 
-// 폼 세팅 및 예매 데이터 구글 전송(POST)
+// [수정] 폼 세팅, 연락처 자동 하이픈 기능 및 예매 데이터 구글 전송
 function setupBookingForm() {
     const submitBtn = document.getElementById("submitBtn");
+    const phoneInput = document.getElementById("phone");
+
+    // 연락처 입력 시 자동 하이픈 추가 이벤트 listen
+    phoneInput.addEventListener("input", (e) => {
+        let value = e.target.value.replace(/[^0-9]/g, ""); // 숫자만 남기기
+        if (value.length > 11) value = value.substring(0, 11); // 최대 11자리 제한
+
+        if (value.length > 7) {
+            e.target.value = `${value.substring(0, 3)}-${value.substring(3, 7)}-${value.substring(7)}`;
+        } else if (value.length > 3) {
+            e.target.value = `${value.substring(0, 3)}-${value.substring(3)}`;
+        } else {
+            e.target.value = value;
+        }
+    });
     
     submitBtn.addEventListener("click", () => {
         const name = document.getElementById("name").value.trim();
-        const phone = document.getElementById("phone").value.trim();
+        let phone = phoneInput.value.trim();
         
         if (!name || !phone) {
             alert("예매자 이름과 연락처를 입력해 주세요.");
             return;
         }
+
+        // 숫자가 도중에 누락되어 하이픈 포맷이 안 맞거나 길이가 짧은 경우 강제 보정 후 시트 전송 준비
+        const pureNumbers = phone.replace(/[^0-9]/g, "");
+        if (pureNumbers.length === 11) {
+            phone = `${pureNumbers.substring(0, 3)}-${pureNumbers.substring(3, 7)}-${pureNumbers.substring(7)}`;
+        } else if (pureNumbers.length === 10) {
+            phone = `${pureNumbers.substring(0, 3)}-${pureNumbers.substring(3, 6)}-${pureNumbers.substring(6)}`;
+        }
+        
         if (selectedSeats.length === 0) {
             alert("좌석을 하나 이상 선택해 주세요.");
             return;
@@ -164,7 +188,7 @@ function setupBookingForm() {
         
         const payload = {
             name: name,
-            phone: phone,
+            phone: phone, // 하이픈이 완벽히 포함된 포맷으로 시트에 저장됩니다.
             seats: selectedSeats.join(",")
         };
         
