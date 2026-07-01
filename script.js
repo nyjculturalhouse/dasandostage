@@ -33,7 +33,7 @@ function loadSeatLayout() {
         });
 }
 
-// [수정] 배치도 렌더링 코어 함수 (json 데이터 기반 유연한 렌더링 및 에러 방지)
+// [최종 수정] 다산아트홀 실제 좌석 배치 최적화 및 렌더링 에러 완벽 해결
 function renderFloor(containerId, rowsData) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -51,25 +51,33 @@ function renderFloor(containerId, rowsData) {
         const seatsRow = document.createElement("div");
         seatsRow.className = "seats-row";
 
-        // JSON 데이터에 명시된 seats 배열을 기반으로만 안전하게 순회합니다.
-        rowData.seats.forEach(seatNum => {
-            const seatId = `1층-${rowData.row}-${seatNum}`; // 1층 전용 네이밍 고정
+        // 다산아트홀 1층은 한 줄에 최대 30번까지 배치되어 있습니다.
+        const maxSeatNum = 30; 
+        for (let i = 1; i <= maxSeatNum; i++) {
+            const seatId = `1층-${rowData.row}-${i}`; // 1층 전용 네이밍 고정
             
-            // 시야 방해석 체크
-            if (rowData.obstructed && rowData.obstructed.includes(seatNum)) {
-                createSpecialButton(seatsRow, seatNum, "reserved", true);
+            // 1. 시야 방해석 체크 (obstructed 배열에 포함되어 있다면 비활성화 좌석으로 렌더링)
+            if (rowData.obstructed && rowData.obstructed.includes(i)) {
+                createSpecialButton(seatsRow, i, "reserved", true);
             }
-            // 장애인석(휠체어) 체크
-            else if (rowData.disabled && rowData.disabled.includes(seatNum)) {
+            // 2. 장애인석(휠체어석) 체크 (disabled 배열에 포함되어 있다면 ♿ 표시로 렌더링)
+            else if (rowData.disabled && rowData.disabled.includes(i)) {
                 const isReserved = reservedSeats.includes(seatId);
                 createSeatButton(seatsRow, seatId, "♿", isReserved, "wheelchair");
             }
-            // 일반 예매 가능 좌석
-            else {
+            // 3. 일반 예매 가능 좌석 체크 (seats 배열에 명시되어 있다면 정상 렌더링)
+            else if (rowData.seats && rowData.seats.includes(i)) {
                 const isReserved = reservedSeats.includes(seatId);
-                createSeatButton(seatsRow, seatId, seatNum, isReserved, "available");
+                createSeatButton(seatsRow, seatId, i, isReserved, "available");
             }
-        });
+            // 4. 통로 및 완전히 비어있는 공백 공간 처리 (가로 비율 유지를 위해 빈 공간 삽입)
+            else {
+                const emptySpace = document.createElement("div");
+                emptySpace.style.width = "25px";
+                emptySpace.style.height = "25px";
+                seatsRow.appendChild(emptySpace);
+            }
+        }
 
         rowDiv.appendChild(seatsRow);
         container.appendChild(rowDiv);
