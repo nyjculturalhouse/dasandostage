@@ -98,18 +98,12 @@ body {
     width: 100%;
     min-width: 900px; /* 30번까지의 좌석이 찌그러지지 않도록 최소 너비 확보 */
 }
+
+/* [수정] 1층 (Floor 1) 글자와 구분선이 나타나는 타이틀 영역을 완전히 숨깁니다 */
 .floor-title {
-    color: #fff;
-    font-size: 14px;
-    font-weight: bold;
-    margin: 25px 0 15px 0;
-    border-bottom: 1px solid #3f4a61;
-    width: 100%;
-    max-width: 880px; /* 구분선 너비 확장 */
-    text-align: center;
-    padding-bottom: 5px;
-    letter-spacing: 1px;
+    display: none !important;
 }
+
 .floor {
     display: flex;
     flex-direction: column;
