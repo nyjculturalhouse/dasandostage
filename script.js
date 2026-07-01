@@ -63,11 +63,8 @@ function renderFloor(containerId, rowsData) {
             const currentSeatCleaned = seatId.replace(/[-_\s]/g, "").trim();
             
             const seatCell = document.createElement("div");
-            seatCell.style.width = "29px";  
-            seatCell.style.height = "29px"; 
-            seatCell.style.display = "flex";
-            seatCell.style.alignItems = "center";
-            seatCell.style.justifyContent = "center";
+            // [모바일 적응형 수정] 인라인 고정 width/height를 제거하고 CSS 클래스로 위임
+            seatCell.className = "seat-cell";
 
             if (rowData.obstructed && rowData.obstructed.includes(i)) {
                 createSpecialButton(seatCell, i, "reserved", true);
@@ -88,8 +85,8 @@ function renderFloor(containerId, rowsData) {
 
             if (i === 9 || i === 19) {
                 const aisleSpace = document.createElement("div");
-                aisleSpace.style.width = "24px"; 
-                aisleSpace.style.height = "29px";
+                // [모바일 적응형 수정] 복도 공간도 비율에 맞추기 위해 인라인 크기 제거 후 클래스 추가
+                aisleSpace.className = "aisle-space";
                 seatsRow.appendChild(aisleSpace);
             }
         }
@@ -214,8 +211,8 @@ function renderModalFloor(rowsData, mySeatsArray) {
             const currentSeatCleaned = seatId.replace(/[-_\s]/g, "").trim();
 
             const seatCell = document.createElement("div");
-            seatCell.style.width = "29px"; seatCell.style.height = "29px";
-            seatCell.style.display = "flex"; seatCell.style.alignItems = "center"; seatCell.style.justifyContent = "center";
+            // [모바일 적응형 수정] 인라인 크기를 제거하고 CSS 클래스로 위임
+            seatCell.className = "seat-cell";
 
             const btn = document.createElement("button");
             btn.style.width = "100%"; btn.style.height = "100%";
@@ -246,7 +243,8 @@ function renderModalFloor(rowsData, mySeatsArray) {
 
             if (i === 9 || i === 19) {
                 const aisleSpace = document.createElement("div");
-                aisleSpace.style.width = "24px"; aisleSpace.style.height = "29px";
+                // [모바일 적응형 수정] 복도 공간도 인라인 제거 후 클래스 추가
+                aisleSpace.className = "aisle-space";
                 seatsRow.appendChild(aisleSpace);
             }
         }
