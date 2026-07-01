@@ -47,12 +47,12 @@ function renderFloor(containerId, rowsData) {
         const seatsRow = document.createElement("div");
         seatsRow.className = "seats-row";
 
-        // 3열과 4열의 시작 정렬을 맞추기 위한 오프셋 (4열부터는 데이터에 "offset": 1 추가 필요)
         for (let o = 0; o < (rowData.offset || 0); o++) {
             seatsRow.appendChild(document.createElement("div")).className = "seat-cell";
         }
 
-        const allSeats = [...(rowData.seats || []), ...(rowData.disabled || []), ...(rowData.obstructed || [])].sort((a, b) => a - b);
+        // 수정: Set을 사용하여 중복 제거
+        const allSeats = Array.from(new Set([...(rowData.seats || []), ...(rowData.disabled || []), ...(rowData.obstructed || [])])).sort((a, b) => a - b);
         const rowNum = parseInt(rowData.row.replace(/[^0-9]/g, ""));
 
         allSeats.forEach(seatNum => {
@@ -70,7 +70,6 @@ function renderFloor(containerId, rowsData) {
             }
             seatsRow.appendChild(seatCell);
 
-            // 통로 조건: 1~3열은 9-10/19-20, 4열부턴 10-11/20-21
             let aisleCondition = (rowNum <= 3) ? (seatNum === 9 || seatNum === 19) : (seatNum === 10 || seatNum === 20);
             if (aisleCondition) {
                 const aisleSpace = document.createElement("div");
@@ -160,7 +159,8 @@ function renderModalFloor(rowsData, mySeatsArray) {
             seatsRow.appendChild(document.createElement("div")).className = "seat-cell";
         }
 
-        const allSeats = [...(rowData.seats || []), ...(rowData.disabled || []), ...(rowData.obstructed || [])].sort((a, b) => a - b);
+        // 수정: Set을 사용하여 중복 제거
+        const allSeats = Array.from(new Set([...(rowData.seats || []), ...(rowData.disabled || []), ...(rowData.obstructed || [])])).sort((a, b) => a - b);
         const rowNum = parseInt(rowData.row.replace(/[^0-9]/g, ""));
 
         allSeats.forEach(seatNum => {
