@@ -149,7 +149,9 @@ body {
     width: 24px;
     height: 29px;
     flex-shrink: 0;
+    display: flex; /* 레이아웃 고정 */
 }
+
 
 /* 💺 좌석 버튼 스타일 클래스들 */
 .seat {
