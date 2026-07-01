@@ -133,6 +133,20 @@ body {
     justify-content: center; 
 }
 
+/* [추가] 자바스크립트 인라인 스타일 대체용 셀 및 통로 디자인 정의 */
+.seat-cell {
+    width: 29px;
+    height: 29px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.aisle-space {
+    width: 24px;
+    height: 29px;
+    flex-shrink: 0;
+}
+
 /* 💺 좌석 버튼 스타일 클래스들 */
 .seat {
     width: 29px;        
@@ -319,7 +333,7 @@ body {
     padding: 35px;
     border-radius: 12px;
     width: 95%;
-    max-width: 1250px; /* [보정] 내부 배치도가 여유롭게 펼쳐지도록 확장 */
+    max-width: 1250px; 
     box-shadow: 0 20px 40px rgba(0,0,0,0.5);
     position: relative;
     max-height: 90vh;
@@ -347,4 +361,65 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    overflow-x: auto;
+}
+
+/* ==========================================================================
+   📱 [적응형 완벽 추가] 모바일 및 태블릿을 위한 미디어 쿼리 최적화 구역
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+    body { padding: 10px; }
+    .main-content {
+        grid-template-columns: 1fr; /* 1열 종형 배치 */
+        min-height: auto;
+    }
+    .info-zone {
+        border-left: none;
+        border-top: 1px solid #e2e8f0;
+    }
+    .header-bar {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    /* 모바일에서 30개 좌석이 무너지지 않고 깔끔하게 축소되도록 축소율(Scale down) 바인딩 */
+    .seating-container {
+        min-width: 1000px; /* 고정 레이아웃 가로 정렬 보존 */
+        transform: scale(0.68); /* 화면 너비에 맞춰 요소를 균등하게 다운사이징 */
+        transform-origin: top center;
+        margin-bottom: -120px; /* 축소로 생기는 여백 상쇄 */
+    }
+    .booking-zone {
+        padding: 25px 10px;
+    }
+    .stage {
+        margin-bottom: 25px;
+    }
+    .modal-content {
+        padding: 20px 15px;
+    }
+    /* 모달 내부 좌석 배치도 동일 스케일 조절 */
+    .modal-booking-zone .seating-container {
+        transform: scale(0.62);
+        margin-bottom: -140px;
+    }
+}
+
+@media (max-width: 480px) {
+    .seating-container {
+        transform: scale(0.42);
+        margin-bottom: -220px;
+    }
+    .modal-booking-zone .seating-container {
+        transform: scale(0.38);
+        margin-bottom: -240px;
+    }
+    .row-label {
+        width: 35px;
+        font-size: 15px; /* 확대 효과 방지 */
+    }
 }
