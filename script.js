@@ -151,22 +151,69 @@ function initActionButtons() {
 
     if (checkBtn) {
         checkBtn.onclick = () => {
-            if (selectedSeats.length === 0) {
-                return alert("선택된 좌석이 없습니다.");
-            }
-            
             const floorContainer = document.getElementById("floor1");
             
-            // 🛠️ 예약 확인하기 하이라이트 모드 토글 구동 기능
-            if (!floorContainer.classList.contains("checking-mode")) {
-                floorContainer.classList.add("checking-mode");
-                checkBtn.innerText = "배치도 돌아가기";
-                checkBtn.style.backgroundColor = "#ff3838";
-            } else {
+            // 만약 이미 확인 모드(checking-mode)라면, 모드를 종료하고 원래 배치도로 원복합니다.
+            if (floorContainer.classList.contains("checking-mode")) {
                 floorContainer.classList.remove("checking-mode");
+                
+                // 내가 조회했던 좌석들의 하이라이트 클래스를 제거합니다.
+                document.querySelectorAll(".seat.my-booked-seat").forEach(btn => {
+                    btn.classList.remove("my-booked-seat");
+                });
+
                 checkBtn.innerText = "예약 확인하기";
                 checkBtn.style.backgroundColor = "#1c2434";
+                return;
             }
+
+            // 입력 필드에서 이름과 연락처를 가져옵니다.
+            const nameInput = document.getElementById("name");
+            const phoneInput = document.getElementById("phone");
+            const name = nameInput ? nameInput.value.trim() : "";
+            const phone = phoneInput ? phoneInput.value.trim() : "";
+
+            // 이름과 연락처가 비어있으면 경고창을 띄웁니다.
+            if (!name || !phone) {
+                return alert("예약 확인을 위해 이름과 연락처를 입력해 주세요.");
+            }
+
+            checkBtn.innerText = "조회 중...";
+            checkBtn.disabled = true;
+
+            // 🚀 구글 앱스 스크립트(GAS)로 이름과 연락처를 쿼리스트링으로 보내 GET 방식으로 조회요청을 보냅니다.
+            fetch(`${GAS_URL}?action=check&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`)
+                .then(res => res.json())
+                .then(result => {
+                    checkBtn.disabled = false;
+
+                    if (result.status === "success" && result.seats && result.seats.length > 0) {
+                        alert(`🎉 [${name}]님의 예약된 좌석을 찾았습니다!\n좌석 위치: ${result.seats.join(", ")}`);
+
+                        floorContainer.classList.add("checking-mode");
+                        checkBtn.innerText = "배치도 돌아가기";
+                        checkBtn.style.backgroundColor = "#ff3838";
+
+                        // 가져온 데이터(예: ["1열-2", "4열-15"])에 대응하는 실제 좌석 엘리먼트를 찾아 체크(하이라이트) 클래스를 줍니다.
+                        result.seats.forEach(seatId => {
+                            const matchBtn = document.querySelector(`[data-seat-id="${seatId}"]`);
+                            if (matchBtn) {
+                                matchBtn.classList.add("my-booked-seat");
+                            }
+                        });
+                    } else {
+                        alert("입력하신 정보로 등록된 예매 내역이 없거나 정보가 일치하지 않습니다.");
+                        checkBtn.innerText = "예약 확인하기";
+                        checkBtn.style.backgroundColor = "#1c2434";
+                    }
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    alert("예약 정보를 조회하는 중 서버 오류가 발생했습니다.");
+                    checkBtn.disabled = false;
+                    checkBtn.innerText = "예약 확인하기";
+                    checkBtn.style.backgroundColor = "#1c2434";
+                });
         };
     }
 
