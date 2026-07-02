@@ -248,6 +248,13 @@ function initActionButtons() {
             if (!name || !phone) {
                 return alert("예매자 성명과 연락처를 모두 입력해 주세요.");
             }
+
+            // 🛠️ [추가] 전화번호 길이 유효성 검사 (숫자만 추출해서 10~11자리 확인)
+            const phoneDigits = phone.replace(/[^0-9]/g, "");
+            if (phoneDigits.length < 10 || phoneDigits.length > 11) {
+                return alert("올바른 전화번호 형식(010-0000-0000)으로 입력해 주세요.");
+            }
+
             if (selectedSeats.length === 0) {
                 return alert("좌석을 최소 1개 이상 선택해 주세요.");
             }
