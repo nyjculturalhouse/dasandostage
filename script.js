@@ -22,7 +22,7 @@ function loadSeatLayout() {
         .then(data => renderFloor("floor1", data.floor1));
 }
 
-// 🎯 최종 수정된 30칸 고정 격자 렌더링 함수 (13열 인덱스 매핑 완벽 수정)
+// 🎯 최종 완성된 30칸 고정 격자 렌더링 함수 (시야제한석 조건 완벽 추가)
 function renderFloor(containerId, rowsData) {
     const container = document.getElementById(containerId);
     container.innerHTML = "";
@@ -50,7 +50,6 @@ function renderFloor(containerId, rowsData) {
                 else if (seatNum >= 21 && seatNum <= 28) actualSeatNum = seatNum - 3;
             } 
             else if (row.row === "13열") {
-                // 🛠️ 13열 피드백 반영 매핑 수식 교정
                 // 좌측 구역 (격자 4~10번 -> 실제 좌석 1~7번)
                 if (seatNum >= 4 && seatNum <= 10) {
                     actualSeatNum = seatNum - 3; 
@@ -86,18 +85,30 @@ function renderFloor(containerId, rowsData) {
 
             if (isExistInJson) {
                 const seatId = `${row.row}-${actualSeatNum}`;
-                const isReserved = reserved.includes(seatId.replace(/[^0-9]/g, ""));
+                
+                // 💡 [시야제한석 차단 조건 추가] 요청하신 열과 번호에 해당하는지 체크
+                let isObstructedSeat = false;
+                if (row.row === "1열") {
+                    isObstructedSeat = [1, 2, 3, 4, 14, 15, 24, 25, 26, 27].includes(actualSeatNum);
+                } else if (row.row === "2열" || row.row === "3열") {
+                    isObstructedSeat = [1, 2, 27, 28].includes(actualSeatNum);
+                } else if (row.row === "7열") {
+                    // 기존 7열의 시야제한석(25, 26번) 유지
+                    isObstructedSeat = [25, 26].includes(actualSeatNum);
+                }
+
+                // GAS에서 예약 완료되었거나, 새로 추가된 시야제한석인 경우 둘 다 예매 불가 처리
+                const isReserved = reserved.includes(seatId.replace(/[^0-9]/g, "")) || isObstructedSeat;
                 const isDisabled = row.disabled?.includes(actualSeatNum);
-                const isObstructed = row.obstructed?.includes(actualSeatNum);
 
                 const btn = document.createElement("button");
                 
-                // 클래스 지정 (시야제한석도 도면처럼 reserved 적용)
-                btn.className = `seat ${isReserved || isObstructed ? "reserved" : (isDisabled ? "wheelchair" : "available")}`;
+                // 클래스 지정 (시야제한석도 예매완료와 동일하게 빨간색 테마 reserved 적용)
+                btn.className = `seat ${isReserved ? "reserved" : (isDisabled ? "wheelchair" : "available")}`;
                 btn.innerText = isDisabled ? "♿" : actualSeatNum;
-                btn.disabled = isReserved || isObstructed;
+                btn.disabled = isReserved; // true가 되면 클릭 불가 및 선택 불가 상태가 됩니다.
                 
-                if (!isReserved && !isObstructed) {
+                if (!isReserved) {
                     btn.onclick = () => handleSeatClick(btn, seatId);
                 }
 
