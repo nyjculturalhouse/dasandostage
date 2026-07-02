@@ -181,39 +181,49 @@ function initActionButtons() {
             checkBtn.innerText = "조회 중...";
             checkBtn.disabled = true;
 
-            // 🚀 구글 앱스 스크립트(GAS)로 이름과 연락처를 쿼리스트링으로 보내 GET 방식으로 조회요청을 보냅니다.
-            fetch(`${GAS_URL}?action=check&name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`)
-                .then(res => res.json())
-                .then(result => {
-                    checkBtn.disabled = false;
+            // 📊 GAS의 doPost 분기 조건에 완벽히 맞추기 위해 POST 방식으로 요청 본문에 실어 전송합니다.
+            const checkQueryData = {
+                action: "checkReservation",
+                name: name,
+                phone: phone
+            };
 
-                    if (result.status === "success" && result.seats && result.seats.length > 0) {
-                        alert(`🎉 [${name}]님의 예약된 좌석을 찾았습니다!\n좌석 위치: ${result.seats.join(", ")}`);
+            fetch(GAS_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(checkQueryData)
+            })
+            .then(res => res.json())
+            .then(result => {
+                checkBtn.disabled = false;
 
-                        floorContainer.classList.add("checking-mode");
-                        checkBtn.innerText = "배치도 돌아가기";
-                        checkBtn.style.backgroundColor = "#ff3838";
+                if (result.status === "success" && result.seats && result.seats.length > 0) {
+                    alert(`🎉 [${name}]님의 예약된 좌석을 찾았습니다!\n좌석 위치: ${result.seats.join(", ")}`);
 
-                        // 가져온 데이터(예: ["1열-2", "4열-15"])에 대응하는 실제 좌석 엘리먼트를 찾아 체크(하이라이트) 클래스를 줍니다.
-                        result.seats.forEach(seatId => {
-                            const matchBtn = document.querySelector(`[data-seat-id="${seatId}"]`);
-                            if (matchBtn) {
-                                matchBtn.classList.add("my-booked-seat");
-                            }
-                        });
-                    } else {
-                        alert("입력하신 정보로 등록된 예매 내역이 없거나 정보가 일치하지 않습니다.");
-                        checkBtn.innerText = "예약 확인하기";
-                        checkBtn.style.backgroundColor = "#1c2434";
-                    }
-                })
-                .catch(err => {
-                    console.error("Error:", err);
-                    alert("예약 정보를 조회하는 중 서버 오류가 발생했습니다.");
-                    checkBtn.disabled = false;
+                    floorContainer.classList.add("checking-mode");
+                    checkBtn.innerText = "배치도 돌아가기";
+                    checkBtn.style.backgroundColor = "#ff3838";
+
+                    // 가져온 데이터(예: ["1열-2", "4열-15"])에 대응하는 실제 좌석 엘리먼트를 찾아 체크(하이라이트) 클래스를 줍니다.
+                    result.seats.forEach(seatId => {
+                        const matchBtn = document.querySelector(`[data-seat-id="${seatId}"]`);
+                        if (matchBtn) {
+                            matchBtn.classList.add("my-booked-seat");
+                        }
+                    });
+                } else {
+                    alert("입력하신 정보로 등록된 예매 내역이 없거나 정보가 일치하지 않습니다.");
                     checkBtn.innerText = "예약 확인하기";
                     checkBtn.style.backgroundColor = "#1c2434";
-                });
+                }
+            })
+            .catch(err => {
+                console.error("Error:", err);
+                alert("예약 정보를 조회하는 중 서버 오류가 발생했습니다.");
+                checkBtn.disabled = false;
+                checkBtn.innerText = "예약 확인하기";
+                checkBtn.style.backgroundColor = "#1c2434";
+            });
         };
     }
 
