@@ -380,4 +380,36 @@ body {
    📱 [적응형 최적화] 모바일 터치 편의성을 위한 가로 스크롤 레이아웃으로 변경
    ========================================================================== */
 
-@media (max-width
+@media (max-width: 1200px) {
+    body { padding: 10px; }
+    .main-content {
+        flex-direction: column; 
+        min-height: auto;
+    }
+    .info-zone {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #e2e8f0;
+    }
+    .header-bar {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    .legend {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .seating-container {
+        min-width: 1050px; 
+        transform: none !important; 
+        margin-bottom: 0 !important;
+        padding: 10px 0;
+    }
+    .booking-zone {
+        padding: 20px 10px;
+    }
+}
