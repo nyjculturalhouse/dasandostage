@@ -1,269 +1,406 @@
 /* 기본 초기화 및 폰트 세팅 */
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 body {
-    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-    background-color: #f4f6f9;
-    color: #333;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
 /* 메인 컨테이너 */
 .container {
-    width: 100%;
-    max-width: 1550px; 
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    overflow: hidden;
+    width: 100%;
+    max-width: 1550px; 
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    overflow: hidden;
 }
 
 /* 상단 헤더 바 */
 .header-bar {
-    background-color: #1c2434;
-    color: #ffffff;
-    padding: 18px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #101622;
+    background-color: #1c2434;
+    color: #ffffff;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #101622;
 }
 .header-bar h1 {
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: -0.5px;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: -0.5px;
 }
 
 /* 범례 (Legend) */
 .legend {
-    display: flex;
-    gap: 15px;
+    display: flex;
+    gap: 15px;
 }
 .legend-item {
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    color: #e2e8f0;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    color: #e2e8f0;
 }
 .box {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    margin-right: 6px;
-    border-radius: 3px;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    border-radius: 3px;
 }
 
-/* 🛠️ 콘텐츠 영역 분할 (Grid 버그 방지를 위해 Flex 구조로 수정) */
+/* 콘텐츠 영역 분할 */
 .main-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    width: 100%;
-    min-height: 750px;
+    display: grid;
+    grid-template-columns: 1fr 380px; 
+    min-height: 750px;
 }
 
-/* 🛠️ [좌측] 좌석 선택 구역 (Flex 주도권 및 찌그러짐 방지 속성 추가) */
+/* [좌측] 좌석 선택 구역 */
 .booking-zone {
-    flex: 1;
-    min-width: 0;
-    background-color: #2a3142;
-    padding: 40px 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    justify-content: flex-start;
-    overflow-x: auto; 
-    -webkit-overflow-scrolling: touch; /* 모바일 부드러운 스크롤 */
+    background-color: #2a3142;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: flex-start;
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch; /* 모바일 부드러운 스크롤 */
 }
 .stage {
-    background: #111622;
-    color: #8892a0;
-    text-align: center;
-    width: 100%;
-    max-width: 800px; 
-    padding: 12px;
-    font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 4px;
-    border-radius: 4px;
-    margin-bottom: 50px;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-    flex-shrink: 0;
+    background: #111622;
+    color: #8892a0;
+    text-align: center;
+    width: 100%;
+    max-width: 800px; 
+    padding: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    border-radius: 4px;
+    margin-bottom: 50px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+    flex-shrink: 0;
 }
 .seating-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    width: 100%;
-    min-width: 1050px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    width: 100%;
+    min-width: 1050px; 
 }
 
 /* 1층 타이틀 영역 숨김 */
 .floor-title {
-    display: none !important;
+    display: none !important;
 }
 
 .floor {
-    display: flex;
-    flex-direction: column;
-    gap: 8px; 
-    width: 100%;
-    align-items: center; 
+    display: flex;
+    flex-direction: column;
+    gap: 8px; 
+    width: 100%;
+    align-items: center; 
 }
 
 /* 행(Row) 배열 레이아웃 */
 .row-container {
-    display: flex;
-    align-items: center;
-    justify-content: center; 
-    width: 100%;
-    max-width: 1100px; 
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    width: 100%;
+    max-width: 1100px; 
 }
 .row-label {
-    width: 55px; 
-    color: #a0aec0;
-    font-size: 13px;
-    font-weight: bold;
-    text-align: left;
-    flex-shrink: 0;
+    width: 55px; 
+    color: #a0aec0;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: left;
+    flex-shrink: 0;
 }
 .seats-row {
-    display: flex;
-    gap: 5px; 
-    justify-content: center; 
+    display: flex;
+    gap: 5px; 
+    justify-content: center; 
 }
 
 /* 자바스크립트 인라인 스타일 대체용 셀 및 통로 디자인 정의 */
 .seat-cell {
-    width: 29px;
-    height: 29px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    width: 29px;
+    height: 29px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 .aisle-space {
-    width: 24px;
-    height: 29px;
-    flex-shrink: 0;
-    display: flex; /* 레이아웃 고정 */
+    width: 24px;
+    height: 29px;
+    flex-shrink: 0;
+    display: flex; /* 레이아웃 고정 */
 }
 
 
 /* 💺 좌석 버튼 스타일 클래스들 */
 .seat {
-    width: 29px;        
-    height: 29px;       
-    border: none;
-    border-radius: 4px;
-    font-size: 11px;    
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.1s ease;
+    width: 29px;        
+    height: 29px;       
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;    
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s ease;
 }
 .available { background-color: #8364e2; color: #fff; }
 .available:hover { background-color: #6c4fd1; transform: scale(1.05); }
-.wheelchair { background-color: #00b894; color: #fff; font-size: 12px; } 
+.wheelchair { background-color: #00b894; color: #fff; font-size: 12px; } 
 .selected { background-color: #ff3838 !important; color: #fff !important; font-weight: bold; transform: scale(1.1); box-shadow: 0 0 8px rgba(255,56,56,0.6); }
 .reserved { background-color: #4b5563; color: #718096; cursor: not-allowed; }
 
 /* 🌟 내가 예매한 좌석 하이라이트 스타일 (노란색 명확히 매핑) */
-.my-reserved { 
-    background-color: #ffc107 !important; 
-    color: #111622 !important; 
-    font-weight: bold !important; 
-    box-shadow: 0 0 12px #ffc107; 
+.my-reserved { 
+    background-color: #ffc107 !important; 
+    color: #111622 !important; 
+    font-weight: bold !important; 
+    box-shadow: 0 0 12px #ffc107; 
 }
 
-/* 🛠️ [우측] 정보 입력 및 결제/예약 구역 (너비 고정 및 수축 차단 속성 보완) */
+/* [우측] 정보 입력 및 결제/예약 구역 */
 .info-zone {
-    width: 380px;
-    flex-shrink: 0;
-    background-color: #ffffff;
-    border-left: 1px solid #e2e8f0;
-    display: flex;
-    flex-direction: column;
-    box-shadow: -4px 0 15px rgba(0,0,0,0.02);
+    background-color: #ffffff;
+    border-left: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 15px rgba(0,0,0,0.02);
 }
 .panel-title {
-    background: #f8fafc;
-    padding: 18px 24px;
-    font-size: 15px;
-    font-weight: bold;
-    border-bottom: 1px solid #e2e8f0;
-    color: #1e293b;
-    letter-spacing: -0.3px;
+    background: #f8fafc;
+    padding: 18px 24px;
+    font-size: 15px;
+    font-weight: bold;
+    border-bottom: 1px solid #e2e8f0;
+    color: #1e293b;
+    letter-spacing: -0.3px;
 }
 .form-section {
-    padding: 24px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    padding: 24px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 .input-group {
-    display: flex;
-    flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 .input-group label {
-    font-size: 13px;
-    font-weight: bold;
-    color: #475569;
-    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #475569;
+    margin-bottom: 8px;
 }
 .input-group input {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #334155;
-    background-color: #f8fafc;
-    transition: all 0.2s ease;
-    outline: none;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #334155;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+    outline: none;
 }
 .input-group input:focus {
-    border-color: #8364e2;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(131, 100, 226, 0.15);
+    border-color: #8364e2;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(131, 100, 226, 0.15);
 }
 
 /* 선택 정보 요약창 */
 .summary-box {
-    background: #f1f5f9;
-    border-radius: 8px;
-    padding: 18px;
-    margin-top: 10px;
-    border: 1px solid #e2e8f0;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 18px;
+    margin-top: 10px;
+    border: 1px solid #e2e8f0;
 }
 .summary-title {
-    font-size: 12px;
-    font-weight: bold;
-    color: #94a3b8;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    letter-spacing: 0.5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
 }
 .summary-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 .summary-item:last-child { margin-bottom: 0; }
 .summary-item span { color: #64748b; font-weight: 500; }
 .summary-item strong { color: #0f172a; font-size: 15px; font-weight: 700; }
 #ticketCount { color: #ff3838; font-size: 16px; }
-#selectedSeatsDisplay { 
-    max-width: 2
+#selectedSeatsDisplay { 
+    max-width: 200px;
+    text-align: right;
+    word-break: break-all;
+    font-size: 13px;
+}
+
+/* 하단 예약 및 확인 버튼 영역 */
+.action-area {
+    padding: 24px;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; 
+}
+.btn-submit {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: #ff3838;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255,56,56,0.3);
+    transition: all 0.2s ease;
+}
+.btn-submit:hover {
+    background: #e02424;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(255,56,56,0.4);
+}
+.btn-submit:disabled {
+    background: #cbd5e1;
+    color: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.btn-check {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #1c2434;
+    color: #ffffff;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-check:hover {
+    background: #2d3748;
+}
+
+/* 🧱 예약 조회 모달 팝업 구조 스타일 복구 및 정렬 강화 */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+.modal-overlay.active {
+    opacity: 1; pointer-events: auto;
+}
+.modal-content {
+    background: #2a3142;
+    padding: 35px;
+    border-radius: 12px;
+    width: 95%;
+    max-width: 1250px; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #3f4a61;
+    padding-bottom: 15px;
+}
+.modal-title { color: #fff; font-size: 18px; font-weight: bold; }
+.modal-close {
+    background: transparent; border: none; color: #a0aec0;
+    font-size: 28px; cursor: pointer; font-weight: bold;
+}
+.modal-close:hover { color: #fff; }
+
+.modal-booking-zone {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ==========================================================================
+   📱 [적응형 최적화] 모바일 터치 편의성을 위한 가로 스크롤 레이아웃으로 변경
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+    body { padding: 10px; }
+    .main-content {
+        grid-template-columns: 1fr; /* 1열 종형 배치 */
+        min-height: auto;
+    }
+    .info-zone {
+        border-left: none;
+        border-top: 1px solid #e2e8f0;
+    }
+    .header-bar {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    .legend {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 768px) {
+    /* [핵심 수정] 모바일에서 억지로 축소(Scale)하지 않고, 터치하기 좋은 29px 크기 유지 + 가로 스크롤 유도 */
+    .seating-container {
+        min-width: 1050px; 
+        transform: none !important; /* 강제 축소 제거 */
+        margin-bottom: 0 !important;
+        padding: 10px 0;
+    }
+    .booking-zone {
