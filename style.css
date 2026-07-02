@@ -338,9 +338,12 @@ body {
     transition: background-color 0.2s ease;
 }
 
-/* 미디어 쿼리 화면 대응 안정화 */
+/* [수정된 미디어 쿼리] 모바일 좌석 정렬 및 스크롤 최적화 (강제 모드) */
 @media (max-width: 1200px) {
-    body { padding: 10px; align-items: flex-start; }
+    body { 
+        padding: 5px; 
+        align-items: flex-start; 
+    }
     .main-content {
         flex-direction: column;
         min-height: auto;
@@ -350,20 +353,34 @@ body {
         border-left: none;
         border-top: 1px solid #e2e8f0;
     }
+    
+    /* 💡 좌석 영역을 블록화하여 전체 공간을 다 쓰도록 변경 */
     .booking-zone {
         width: 100%;
-        overflow-x: auto;
-        padding: 20px 10px;
+        display: block; 
+        overflow-x: auto; 
+        padding: 20px 0;
+        -webkit-overflow-scrolling: touch;
     }
+    
+    /* 💡 좌석들을 감싸는 컨테이너의 정렬 기준을 왼쪽으로 고정 */
     .seating-container {
-        min-width: 1200px;
-        align-items: flex-start;
+        display: block; /* Flex를 해제하여 배치를 단순화 */
+        min-width: 1300px; 
+        margin: 0;
+        padding-left: 10px;
     }
+    
+    /* 각 행들을 왼쪽 정렬로 강제 */
     .row-container {
+        display: flex;
         justify-content: flex-start !important;
-        padding-left: 20px;
+        width: 100%;
     }
+    
     .seats-row {
+        display: flex;
         justify-content: flex-start !important;
+        gap: 5px;
     }
 }
