@@ -108,6 +108,7 @@ function renderFloor(containerId, rowsData) {
                 btn.className = `seat ${isReserved ? "reserved" : (isDisabled ? "wheelchair" : "available")}`;
                 btn.innerText = isDisabled ? "♿" : actualSeatNum;
                 btn.disabled = isReserved; 
+                btn.setAttribute("data-seat-id", seatId); // 🛠️ 예약 확인 모드를 위해 seatId 저장용 속성 추가
                 
                 if (!isReserved) {
                     btn.onclick = () => handleSeatClick(btn, seatId);
@@ -128,13 +129,13 @@ function renderFloor(containerId, rowsData) {
 }
 
 function handleSeatClick(btn, seatId) {
-    if (!btn.classList.contains("selected") && selectedSeats.length >= 5) { 
-        return alert("최대 5개까지 선택 가능합니다."); 
-    }
+    if (document.getElementById("floor1").classList.contains("checking-mode")) return; // 확인 모드일 때는 클릭 막기
 
-    const isSelected = btn.classList.toggle("selected");
-
-    if (isSelected) {
+    if (btn.classList.toggle("selected")) {
+        if (selectedSeats.length >= 5) { 
+            btn.classList.remove("selected"); 
+            return alert("최대 5개까지 선택 가능합니다."); 
+        }
         selectedSeats.push(seatId);
     } else {
         selectedSeats = selectedSeats.filter(s => s !== seatId);
@@ -153,7 +154,19 @@ function initActionButtons() {
             if (selectedSeats.length === 0) {
                 return alert("선택된 좌석이 없습니다.");
             }
-            alert(`현재 선택하신 좌석은 [ ${selectedSeats.join(", ")} ] 입니다.\n배치도에 노란색으로 표시된 좌석을 한 번 더 확인해 주세요.`);
+            
+            const floorContainer = document.getElementById("floor1");
+            
+            // 🛠️ 예약 확인하기 하이라이트 모드 토글 구동 기능
+            if (!floorContainer.classList.contains("checking-mode")) {
+                floorContainer.classList.add("checking-mode");
+                checkBtn.innerText = "배치도 돌아가기";
+                checkBtn.style.backgroundColor = "#ff3838";
+            } else {
+                floorContainer.classList.remove("checking-mode");
+                checkBtn.innerText = "예약 확인하기";
+                checkBtn.style.backgroundColor = "#1c2434";
+            }
         };
     }
 
