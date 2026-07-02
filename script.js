@@ -52,11 +52,7 @@ function renderFloor(containerId, rowsData) {
             seatsRow.appendChild(document.createElement("div")).className = "seat-cell";
         }
 
-        const allSeats = [...new Set([
-            ...(row.seats || []),
-            ...(row.disabled || []),
-            ...(row.obstructed || [])
-        ])].sort((a, b) => a - b);
+        const allSeats = [...new Set([...(row.seats || []), ...(row.disabled || []), ...(row.obstructed || [])])].sort((a, b) => a - b);
         
         allSeats.forEach((seatNum, index) => {
             const seatId = `${row.row}-${seatNum}`;
@@ -76,7 +72,7 @@ function renderFloor(containerId, rowsData) {
             cell.appendChild(btn);
             seatsRow.appendChild(cell);
 
-            // 13열 전용 통로 및 나머지 열 통로 처리
+            // 13열 전용 통로: 7번 뒤, 19번 뒤에 통로를 생성하여 정확한 간격 구현
             if (row.row === "13열") {
                 if (seatNum === 7 || seatNum === 19) {
                     seatsRow.appendChild(document.createElement("div")).className = "aisle-space";
