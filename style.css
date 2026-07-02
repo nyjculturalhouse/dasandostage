@@ -179,24 +179,31 @@ body {
 .reserved { background-color: #4b5563; color: #718096; cursor: not-allowed; }
 
 /* 🛠️ [예약 확인 확인하기 구동 스타일 추가] 확인 모드일 때 선택 안 된 좌석들은 암전(흐리게) 처리 */
-.floor.checking-mode .seat:not(.selected) {
+.floor.checking-mode .seat:not(.my-booked-seat) {
     opacity: 0.15;
     pointer-events: none;
 }
-.floor.checking-mode .seat.selected {
-    transform: scale(1.2);
-    box-shadow: 0 0 15px #f1c40f;
+
+/* 🛠️ 내 예약 찾기 팝업 조회 성공 시, 배치도에서 해당 좌석을 확실하게 체크 표시해 주는 전용 스타일 */
+.floor.checking-mode .seat.my-booked-seat {
+    opacity: 1 !important;
+    background-color: #2ecc71 !important; /* 내 예약 좌석은 선명한 녹색으로 강제 변경 */
+    color: #ffffff !important;
+    font-weight: bold;
+    transform: scale(1.25);
+    box-shadow: 0 0 15px #2ecc71;
     animation: blink 1s infinite alternate;
 }
+
 @keyframes blink {
-    0% { transform: scale(1.1); box-shadow: 0 0 5px #f1c40f; }
-    100% { transform: scale(1.25); box-shadow: 0 0 20px #f1c40f; }
+    0% { transform: scale(1.15); box-shadow: 0 0 5px #2ecc71; }
+    100% { transform: scale(1.25); box-shadow: 0 0 20px #2ecc71; }
 }
 
 /* [우측] 정보 입력 및 예약 구역 (너비 고정 및 찌러짐 방지) */
 .info-zone {
     width: 380px;
-    flex-shrink: 0; /* 좌석 구역이 넓어져도 이 구역이 찌그러지지 않도록 고정 */
+    flex-shrink: 0; /* 좌석 구역이 넓어져도 이 구역이 찌러지지 않도록 고정 */
     background-color: #ffffff;
     border-left: 1px solid #e2e8f0;
     display: flex;
