@@ -22,7 +22,7 @@ function loadSeatLayout() {
         .then(data => renderFloor("floor1", data.floor1));
 }
 
-// 🎯 최종 수정된 30칸 고정 격자 렌더링 함수 (중복 제거 완료)
+// 🎯 최종 수정된 30칸 고정 격자 렌더링 함수 (13열 인덱스 매핑 완벽 수정)
 function renderFloor(containerId, rowsData) {
     const container = document.getElementById(containerId);
     container.innerHTML = "";
@@ -38,43 +38,61 @@ function renderFloor(containerId, rowsData) {
         const seatsRow = document.createElement("div");
         seatsRow.className = "seats-row";
 
-        // 해당 행에 존재하는 모든 좌석 종류(일반, 장애인, 시야제한)의 번호를 총망라하여 수집
-        const seatNumbersInJson = new Set([
-            ...(row.seats || []), 
-            ...(row.disabled || []), 
-            ...(row.obstructed || [])
-        ]);
-
-        // 💡 [열별 격자 시작점 설정]
-        // 1열, 2열, 3열은 2번째 칸부터 1번이 시작하므로 offset은 1
-        // 13열은 4번째 칸부터 1번이 시작하므로 offset은 3
-        // 그 외 4~12열은 1번째 칸부터 시작하므로 offset은 0
-        let gridOffset = 0;
-        if (row.row === "1열" || row.row === "2열" || row.row === "3열") {
-            gridOffset = 1;
-        } else if (row.row === "13열") {
-            gridOffset = 3;
-        }
-
-        // 도면의 격자는 최대 30번까지 존재하므로, 1번부터 30번까지 순서대로 칸을 만듭니다.
+        // 도면의 원본 격자는 무조건 1번부터 30번까지 순서대로 칸을 만듭니다.
         for (let seatNum = 1; seatNum <= 30; seatNum++) {
-            
-            // 💡 현재 격자 번호(seatNum)에서 해당 열의 오프셋을 빼서 실제 JSON 내부의 좌석 번호를 구합니다.
-            const actualSeatNum = seatNum - gridOffset;
+            let actualSeatNum = null;
 
-            // JSON 데이터에 계산된 실제 좌석 번호 정의가 있는 경우에만 버튼을 생성
-            if (actualSeatNum > 0 && seatNumbersInJson.has(actualSeatNum)) {
+            // 💡 [도면 매핑 로직] 각 격자(seatNum) 위치에 들어갈 실제 JSON 좌석 번호(actualSeatNum) 매칭
+            if (row.row === "1열" || row.row === "2열" || row.row === "3열") {
+                // 1~3열: 격자 2~9번 = 좌석 1~8번 / 격자 11~19번 = 좌석 9~17번 / 격자 21~28번 = 좌석 18~25번
+                if (seatNum >= 2 && seatNum <= 9) actualSeatNum = seatNum - 1;
+                else if (seatNum >= 11 && seatNum <= 19) actualSeatNum = seatNum - 2;
+                else if (seatNum >= 21 && seatNum <= 28) actualSeatNum = seatNum - 3;
+            } 
+            else if (row.row === "13열") {
+                // 🛠️ 13열 피드백 반영 매핑 수식 교정
+                // 좌측 구역 (격자 4~10번 -> 실제 좌석 1~7번)
+                if (seatNum >= 4 && seatNum <= 10) {
+                    actualSeatNum = seatNum - 3; 
+                }
+                // 중간 구역 (격자 11~20번 -> 실제 좌석 10~19번)
+                else if (seatNum >= 11 && seatNum <= 20) {
+                    actualSeatNum = seatNum - 1; 
+                }
+                // 우측 구역 (격자 21~26번 -> 실제 좌석 22~27번)
+                else if (seatNum >= 21 && seatNum <= 26) {
+                    actualSeatNum = seatNum + 1; 
+                }
+            } 
+            else {
+                // 4~12열: 격자 번호와 실제 좌석 번호가 1:1로 일치
+                actualSeatNum = seatNum;
+            }
+
+            // 해당 위치에 배치할 실제 좌석 번호가 존재하고, JSON 데이터(seats, disabled, obstructed)에 정의되어 있는지 확인
+            const isExistInJson = actualSeatNum && (
+                row.seats?.includes(actualSeatNum) ||
+                row.disabled?.includes(actualSeatNum) ||
+                row.obstructed?.includes(actualSeatNum)
+            );
+
+            const cell = document.createElement("div");
+            cell.className = "seat-cell";
+
+            // 🛠️ [통로 마진 정밀 설정] 좌석 유무와 관계없이 '격자' 기준 10번과 20번 뒤에 무조건 고정 통로 배치
+            if (seatNum === 10 || seatNum === 20) {
+                cell.style.marginRight = "24px";
+            }
+
+            if (isExistInJson) {
                 const seatId = `${row.row}-${actualSeatNum}`;
-                const cell = document.createElement("div");
-                cell.className = "seat-cell";
-
                 const isReserved = reserved.includes(seatId.replace(/[^0-9]/g, ""));
                 const isDisabled = row.disabled?.includes(actualSeatNum);
                 const isObstructed = row.obstructed?.includes(actualSeatNum);
 
                 const btn = document.createElement("button");
                 
-                // 클래스 지정 (시야제한석도 도면처럼 빨간색/선택불가 테마인 reserved 적용)
+                // 클래스 지정 (시야제한석도 도면처럼 reserved 적용)
                 btn.className = `seat ${isReserved || isObstructed ? "reserved" : (isDisabled ? "wheelchair" : "available")}`;
                 btn.innerText = isDisabled ? "♿" : actualSeatNum;
                 btn.disabled = isReserved || isObstructed;
@@ -83,27 +101,13 @@ function renderFloor(containerId, rowsData) {
                     btn.onclick = () => handleSeatClick(btn, seatId);
                 }
 
-                // 🛠️ [통로 마진 정밀 설정 수정] 
-                // 1~10칸 / 11~20칸 / 21~30칸 구역 분할에 맞춰 
-                // 10번 칸과 20번 칸의 오른쪽에 정확히 통로 마진을 부여합니다.
-                if (seatNum === 10 || seatNum === 20) {
-                    cell.style.marginRight = "24px";
-                }
-
                 cell.appendChild(btn);
-                seatsRow.appendChild(cell);
             } else {
-                // 데이터에 없는 좌석 번호 칸은 도면처럼 투명한 빈 공간(통로 또는 공백) 처리
-                const emptyCell = document.createElement("div");
-                emptyCell.className = "seat-cell";
-                
-                // 🛠️ 빈 공간 격자일지라도 10번, 20번 위치를 지나갈 때는 동일하게 마진을 유지합니다.
-                if (seatNum === 10 || seatNum === 20) {
-                    emptyCell.style.marginRight = "24px";
-                }
-                
-                seatsRow.appendChild(emptyCell);
+                // 좌석이 배치되지 않는 격자 칸은 투명한 공백 처리
+                cell.classList.add("empty");
             }
+
+            seatsRow.appendChild(cell);
         }
 
         rowDiv.appendChild(seatsRow);
