@@ -141,7 +141,7 @@ function handleSeatClick(btn, seatId) {
     document.getElementById("ticketCount").innerText = selectedSeats.length;
 }
 
-// 🛠️ 새로 추가된 버튼 클릭 처리용 함수 (다른 곳은 수정 없이 하단에 연동 로직만 순수 추가)
+// 🛠️ 버튼 클릭 처리 및 구글 앱스 스크립트(GAS) 전송 연동 함수
 function initActionButtons() {
     const checkBtn = document.getElementById("checkBtn");
     const submitBtn = document.getElementById("submitBtn");
@@ -171,8 +171,45 @@ function initActionButtons() {
             }
 
             if (confirm(`[${name}]님, 선택하신 좌석 [ ${selectedSeats.join(", ")} ] 총 ${selectedSeats.length}개로 예약을 확정하시겠습니까?`)) {
-                // 전송 기능 확장용 로직 위치
-                alert("예약이 요청되었습니다.");
+                
+                // 📊 [구글 시트 전송용 데이터 구성] 요청하신 5대 항목 취합
+                const now = new Date();
+                const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+                
+                const bookingData = {
+                    timestamp: timestamp,                        // 1. 예약일시
+                    name: name,                                  // 2. 성함
+                    phone: phone,                                // 3. 연락처
+                    count: selectedSeats.length,                 // 4. 예매좌석 수
+                    seats: selectedSeats.join(", ")              // 5. 예매좌석 위치
+                };
+
+                // 🚀 구글 앱스 스크립트(GAS)로 POST 전송
+                submitBtn.disabled = true;
+                submitBtn.innerText = "전송 중...";
+
+                fetch(GAS_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(bookingData)
+                })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.status === "success") {
+                        alert("🎉 예약이 완벽하게 확정되었습니다!");
+                        location.reload(); // 성공 시 페이지를 새로고침하여 예약 좌석 갱신
+                    } else {
+                        alert("예약 처리 중 오류가 발생했습니다: " + (result.message || "알 수 없는 에러"));
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = "예약 확정하기";
+                    }
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    alert("서버 통신 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "예약 확정하기";
+                });
             }
         };
     }
