@@ -41,15 +41,18 @@ function renderFloor(containerId, rowsData) {
     const reserved = reservedSeats.map(s => String(s).replace(/[^0-9]/g, ""));
 
     rowsData.forEach(row => {
-        const config = rowLayoutConfigs[row.row] || { offset: row.offset || 0, aisles: (parseInt(row.row) <= 3 ? [9, 19] : [10, 20]) };
+        // [중요 수정] JSON 데이터에 "offset"이 있으면 그 값을 쓰고, 없으면 rowLayoutConfigs를 씁니다.
+        const config = rowLayoutConfigs[row.row] || { offset: 0, aisles: [10, 20] };
+        const finalOffset = (row.offset !== undefined) ? row.offset : config.offset;
+
         const rowDiv = document.createElement("div");
         rowDiv.className = "row-container";
         rowDiv.innerHTML = `<div class="row-label">${row.row}</div>`;
         const seatsRow = document.createElement("div");
         seatsRow.className = "seats-row";
 
-        // Offset 적용
-        for (let i = 0; i < config.offset; i++) {
+        // 확정된 finalOffset만큼 빈 셀 생성
+        for (let i = 0; i < finalOffset; i++) {
             seatsRow.appendChild(document.createElement("div")).className = "seat-cell";
         }
 
@@ -73,9 +76,8 @@ function renderFloor(containerId, rowsData) {
             cell.appendChild(btn);
             seatsRow.appendChild(cell);
 
-            // 13열 전용 통로 및 나머지 열 통로
+            // 13열 통로 로직
             if (row.row === "13열") {
-                // 13열의 통로 (PDF 기준)
                 if (seatNum === 7 || seatNum === 19) {
                     seatsRow.appendChild(document.createElement("div")).className = "aisle-space";
                 }
