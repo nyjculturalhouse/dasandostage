@@ -341,23 +341,34 @@ body {
 /* [수정된 미디어 쿼리] 모바일 좌석 정렬 및 스크롤 최적화 (강제 모드) */
 /* [최종 해결책] 모바일에서 좌석이 왼쪽으로 밀려나지 않게 강제 고정 */
 @media (max-width: 1200px) {
-    /* 1. 컨테이너를 강제로 왼쪽 정렬 */
-    .seating-container {
-        min-width: 1200px !important;
-        margin-left: 0 !important;
-        align-items: flex-start !important;
-        padding-left: 10px !important;
+    /* 1. 전체 구조가 세로로 쌓이게 함 */
+    .main-content {
+        flex-direction: column;
     }
-    
-    /* 2. 모든 행을 왼쪽 정렬로 고정 */
+
+    /* 2. 좌석 선택 구역: 화면 너비만큼만 차지하고 가로 스크롤 생성 */
+    .booking-zone {
+        width: 100vw; /* 화면 너비를 꽉 채움 */
+        overflow-x: auto; /* 핵심: 넘치는 부분은 스크롤로 처리 */
+        padding: 20px 10px;
+        flex: none; /* 플렉스 비율 해제 */
+    }
+
+    /* 3. 좌석 컨테이너: 절대 찌그러지지 않도록 크기 고정 */
+    .seating-container {
+        min-width: 1300px; /* 좌석 배치도가 다 들어올 만큼 충분히 큰 너비 */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* 왼쪽 정렬 */
+    }
+
+    /* 4. 행 정렬: 왼쪽부터 시작 */
     .row-container {
         justify-content: flex-start !important;
-        margin: 0 !important;
+        width: 100%;
     }
-    
-    /* 3. 좌석 행 역시 왼쪽 정렬로 고정 */
+
     .seats-row {
         justify-content: flex-start !important;
-        margin-left: 0 !important;
     }
 }
