@@ -58,37 +58,32 @@ function renderFloor(containerId, rowsData) {
 
         const allSeats = [...new Set([...(row.seats || []), ...(row.disabled || []), ...(row.obstructed || [])])].sort((a, b) => a - b);
         
-        allSeats.forEach((seatNum, index) => {
+        // ... (위쪽 코드 동일)
+
+        allSeats.forEach((seatNum) => { // index 변수는 삭제해도 됩니다
             const seatId = `${row.row}-${seatNum}`;
             const cell = document.createElement("div");
             cell.className = "seat-cell";
 
-            const isReserved = reserved.includes(seatId.replace(/[^0-9]/g, ""));
-            const isDisabled = row.disabled?.includes(seatNum);
-            const isObstructed = row.obstructed?.includes(seatNum);
+            // ... (버튼 생성 로직 동일)
 
-            const btn = document.createElement("button");
-            btn.className = `seat ${isReserved || isObstructed ? "reserved" : (isDisabled ? "wheelchair" : "available")}`;
-            btn.innerText = isDisabled ? "♿" : seatNum;
-            btn.disabled = isReserved || isObstructed;
-            if (!isReserved && !isObstructed) btn.onclick = () => handleSeatClick(btn, seatId);
-            
             cell.appendChild(btn);
             seatsRow.appendChild(cell);
 
-            // 13열 통로 로직
+            // [수정된 통로 로직] 
+            // 13열은 7, 19번 뒤에 통로, 나머지는 좌석 번호를 기준으로 고정 통로 배치
             if (row.row === "13열") {
-                if (seatNum === 7 || seatNum === 19) {
+                if (seatNum === 3 || seatNum === 19) { // PDF 기준 13열 통로 위치
                     seatsRow.appendChild(document.createElement("div")).className = "aisle-space";
                 }
-            } else if (config.aisles.includes(index + 1)) {
-                seatsRow.appendChild(document.createElement("div")).className = "aisle-space";
+            } else {
+                // 좌석 번호가 10번 또는 20번인 좌석 바로 다음에 통로 삽입
+                if (seatNum === 10 || seatNum === 20) {
+                    seatsRow.appendChild(document.createElement("div")).className = "aisle-space";
+                }
             }
         });
-        rowDiv.appendChild(seatsRow);
-        container.appendChild(rowDiv);
-    });
-}
+// ... (아래 코드 동일)
 
 function handleSeatClick(btn, seatId) {
     if (btn.classList.toggle("selected")) {
