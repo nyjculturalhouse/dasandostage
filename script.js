@@ -2,7 +2,6 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbwEGlst8zJdzKQaQzMxzF7S
 let selectedSeats = [];
 let reservedSeats = [];
 
-// 열별 배치 설정 추가
 const rowLayoutConfigs = {
     "1열": { offset: 0, aisles: [9, 19] },
     "2열": { offset: 1, aisles: [9, 19] },
@@ -16,7 +15,7 @@ const rowLayoutConfigs = {
     "10열": { offset: 0, aisles: [10, 20] },
     "11열": { offset: 0, aisles: [10, 20] },
     "12열": { offset: 0, aisles: [10, 20] },
-    "13열": { offset: 3, aisles: [9, 19] }
+    "13열": { offset: 3, aisles: [] }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -49,7 +48,6 @@ function renderFloor(containerId, rowsData) {
         const seatsRow = document.createElement("div");
         seatsRow.className = "seats-row";
 
-        // Offset 처리
         for (let i = 0; i < config.offset; i++) {
             seatsRow.appendChild(document.createElement("div")).className = "seat-cell";
         }
@@ -70,18 +68,20 @@ function renderFloor(containerId, rowsData) {
             const isObstructed = row.obstructed?.includes(seatNum);
 
             const btn = document.createElement("button");
-            // 예약 완료 또는 시야 방해석인 경우 reserved 클래스 부여
             btn.className = `seat ${isReserved || isObstructed ? "reserved" : (isDisabled ? "wheelchair" : "available")}`;
             btn.innerText = isDisabled ? "♿" : seatNum;
-            // 예약 완료 또는 시야 방해석인 경우 클릭 비활성화
             btn.disabled = isReserved || isObstructed;
             if (!isReserved && !isObstructed) btn.onclick = () => handleSeatClick(btn, seatId);
             
             cell.appendChild(btn);
             seatsRow.appendChild(cell);
 
-            // 통로 자동 배치 로직 (config 기반으로 변경)
-            if (config.aisles.includes(index + 1)) {
+            // 13열 전용 통로 및 나머지 열 통로 처리
+            if (row.row === "13열") {
+                if (seatNum === 7 || seatNum === 19) {
+                    seatsRow.appendChild(document.createElement("div")).className = "aisle-space";
+                }
+            } else if (config.aisles.includes(index + 1)) {
                 seatsRow.appendChild(document.createElement("div")).className = "aisle-space";
             }
         });
