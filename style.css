@@ -338,37 +338,45 @@ body {
     transition: background-color 0.2s ease;
 }
 
-/* [수정된 미디어 쿼리] 모바일 좌석 정렬 및 스크롤 최적화 (강제 모드) */
-/* [최종 해결책] 모바일에서 좌석이 왼쪽으로 밀려나지 않게 강제 고정 */
+/* 미디어 쿼리: 모바일 환경에서만 적용 */
 @media (max-width: 1200px) {
-    /* 1. 전체 구조가 세로로 쌓이게 함 */
+    /* 1. 전체 콘텐츠를 세로 방향으로 나열 */
     .main-content {
-        flex-direction: column;
+        flex-direction: column !important;
+        display: flex !important;
     }
 
-    /* 2. 좌석 선택 구역: 화면 너비만큼만 차지하고 가로 스크롤 생성 */
+    /* 2. 좌석 선택 구역: 화면 전체 너비를 차지하고 가로 스크롤 생성 */
     .booking-zone {
-        width: 100vw; /* 화면 너비를 꽉 채움 */
-        overflow-x: auto; /* 핵심: 넘치는 부분은 스크롤로 처리 */
-        padding: 20px 10px;
-        flex: none; /* 플렉스 비율 해제 */
+        width: 100% !important;
+        flex: none !important;
+        overflow-x: auto !important; /* 좌석이 넘치면 스크롤되도록 설정 */
+        padding: 20px 10px !important;
+        display: block !important;
     }
 
-    /* 3. 좌석 컨테이너: 절대 찌그러지지 않도록 크기 고정 */
+    /* 3. 좌석 컨테이너: 절대 찌그러지지 않게 너비 강제 */
     .seating-container {
-        min-width: 1300px; /* 좌석 배치도가 다 들어올 만큼 충분히 큰 너비 */
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start; /* 왼쪽 정렬 */
+        min-width: 1200px !important; /* 좌석들이 한 줄에 다 보이게 충분한 너비 */
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important; /* 왼쪽 정렬 시작 */
+        margin: 0 !important;
     }
 
-    /* 4. 행 정렬: 왼쪽부터 시작 */
+    /* 4. 우측 예약 정보창: 좌석창 아래로 배치 */
+    .info-zone {
+        width: 100% !important;
+        border-left: none !important;
+        border-top: 2px solid #e2e8f0 !important;
+        flex-shrink: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* 5. 각 행 정렬 */
     .row-container {
         justify-content: flex-start !important;
-        width: 100%;
-    }
-
-    .seats-row {
-        justify-content: flex-start !important;
+        width: 100% !important;
     }
 }
