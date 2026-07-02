@@ -45,24 +45,38 @@ function renderFloor(containerId, rowsData) {
             ...(row.obstructed || [])
         ]);
 
+        // 💡 [열별 격자 시작점 설정]
+        // 1열, 2열, 3열은 2번째 칸부터 1번이 시작하므로 offset은 1
+        // 13열은 4번째 칸부터 1번이 시작하므로 offset은 3
+        // 그 외 4~12열은 1번째 칸부터 시작하므로 offset은 0
+        let gridOffset = 0;
+        if (row.row === "1열" || row.row === "2열" || row.row === "3열") {
+            gridOffset = 1;
+        } else if (row.row === "13열") {
+            gridOffset = 3;
+        }
+
         // 도면의 격자는 최대 30번까지 존재하므로, 1번부터 30번까지 순서대로 칸을 만듭니다.
         for (let seatNum = 1; seatNum <= 30; seatNum++) {
             
-            // JSON 데이터에 해당 좌석 번호 정의가 있는 경우에만 버튼을 생성
-            if (seatNumbersInJson.has(seatNum)) {
-                const seatId = `${row.row}-${seatNum}`;
+            // 💡 현재 격자 번호(seatNum)에서 해당 열의 오프셋을 빼서 실제 JSON 내부의 좌석 번호를 구합니다.
+            const actualSeatNum = seatNum - gridOffset;
+
+            // JSON 데이터에 계산된 실제 좌석 번호 정의가 있는 경우에만 버튼을 생성
+            if (actualSeatNum > 0 && seatNumbersInJson.has(actualSeatNum)) {
+                const seatId = `${row.row}-${actualSeatNum}`;
                 const cell = document.createElement("div");
                 cell.className = "seat-cell";
 
                 const isReserved = reserved.includes(seatId.replace(/[^0-9]/g, ""));
-                const isDisabled = row.disabled?.includes(seatNum);
-                const isObstructed = row.obstructed?.includes(seatNum);
+                const isDisabled = row.disabled?.includes(actualSeatNum);
+                const isObstructed = row.obstructed?.includes(actualSeatNum);
 
                 const btn = document.createElement("button");
                 
                 // 클래스 지정 (시야제한석도 도면처럼 빨간색/선택불가 테마인 reserved 적용)
                 btn.className = `seat ${isReserved || isObstructed ? "reserved" : (isDisabled ? "wheelchair" : "available")}`;
-                btn.innerText = isDisabled ? "♿" : seatNum;
+                btn.innerText = isDisabled ? "♿" : actualSeatNum;
                 btn.disabled = isReserved || isObstructed;
                 
                 if (!isReserved && !isObstructed) {
