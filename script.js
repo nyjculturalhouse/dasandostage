@@ -15,9 +15,9 @@ function fetchReservedSeats() {
         .catch(() => { reservedSeats = []; loadSeatLayout(); });
 }
 
-// script.js 수정
+// 🛠️ 기존 fetch("seats.json") 뒤에 ?v=1 을 붙여서 캐시를 강제로 파괴합니다.
 function loadSeatLayout() {
-    fetch("seats.json?v=2")  // <-- 숫자를 2로 변경!
+    fetch("seats.json?v=2")  // <-- 새로고침 반영을 위해 v=2로 변경
         .then(res => res.json())
         .then(data => renderFloor("floor1", data.floor1));
 }
@@ -44,10 +44,11 @@ function renderFloor(containerId, rowsData) {
 
             // 💡 [도면 매핑 로직] 각 격자(seatNum) 위치에 들어갈 실제 JSON 좌석 번호(actualSeatNum) 매칭
             if (row.row === "1열" || row.row === "2열" || row.row === "3열") {
-                // 🛠️ 1~3열 정렬 피드백 반영: 격자 번호와 좌석 번호가 1:1로 일치해야 통로 라인과 매칭됩니다.
-                // 1번 칸만 공백으로 비워두고, 2번 칸부터 좌석 번호 2번, 10번 칸은 좌석 번호 10번으로 매핑
-                if (seatNum >= 2 && seatNum <= 30) {
-                    actualSeatNum = seatNum;
+                // 🛠️ 1~3열 수정: 1번 격자는 통로로 비우고, 2번 격자부터 실제 좌석 1번이 매핑되도록 -1 연산 적용
+                if (seatNum === 1) {
+                    actualSeatNum = null;
+                } else if (seatNum >= 2 && seatNum <= 30) {
+                    actualSeatNum = seatNum - 1;
                 }
             } 
             else if (row.row === "13열") {
@@ -74,68 +75,3 @@ function renderFloor(containerId, rowsData) {
                 row.seats?.includes(actualSeatNum) ||
                 row.disabled?.includes(actualSeatNum) ||
                 row.obstructed?.includes(actualSeatNum)
-            );
-
-            const cell = document.createElement("div");
-            cell.className = "seat-cell";
-
-            // 🛠️ [통로 마진 정밀 설정] 좌석 유무와 관계없이 '격자' 기준 10번과 20번 뒤에 무조건 고정 통로 배치
-            if (seatNum === 10 || seatNum === 20) {
-                cell.style.marginRight = "24px";
-            }
-
-            if (isExistInJson) {
-                const seatId = `${row.row}-${actualSeatNum}`;
-                
-                // 💡 [시야제한석 차단 조건]
-                let isObstructedSeat = false;
-                if (row.row === "1열") {
-                    isObstructedSeat = [1, 2, 3, 4, 14, 15, 24, 25, 26, 27].includes(actualSeatNum);
-                } else if (row.row === "2열" || row.row === "3열") {
-                    isObstructedSeat = [1, 2, 27, 28].includes(actualSeatNum);
-                } else if (row.row === "7열") {
-                    isObstructedSeat = [25, 26].includes(actualSeatNum);
-                }
-
-                // GAS에서 예약 완료되었거나 시야제한석인 경우 예매 불가 처리
-                const isReserved = reserved.includes(seatId.replace(/[^0-9]/g, "")) || isObstructedSeat;
-                const isDisabled = row.disabled?.includes(actualSeatNum);
-
-                const btn = document.createElement("button");
-                
-                // 클래스 지정
-                btn.className = `seat ${isReserved ? "reserved" : (isDisabled ? "wheelchair" : "available")}`;
-                btn.innerText = isDisabled ? "♿" : actualSeatNum;
-                btn.disabled = isReserved; 
-                
-                if (!isReserved) {
-                    btn.onclick = () => handleSeatClick(btn, seatId);
-                }
-
-                cell.appendChild(btn);
-            } else {
-                // 좌석이 배치되지 않는 격자 칸은 투명한 공백 처리
-                cell.classList.add("empty");
-            }
-
-            seatsRow.appendChild(cell);
-        }
-
-        rowDiv.appendChild(seatsRow);
-        container.appendChild(rowDiv);
-    });
-}
-
-function handleSeatClick(btn, seatId) {
-    if (btn.classList.toggle("selected")) {
-        if (selectedSeats.length >= 5) { 
-            btn.classList.remove("selected"); 
-            return alert("최대 5개까지 선택 가능합니다."); 
-        }
-        selectedSeats.push(seatId);
-    } else {
-        selectedSeats = selectedSeats.filter(s => s !== seatId);
-    }
-    document.getElementById("selectedSeatsDisplay").innerText = selectedSeats.length ? selectedSeats.join(", ") : "없음";
-    document.getElementById("ticketCount").innerText = selectedSeats.length;
-}
