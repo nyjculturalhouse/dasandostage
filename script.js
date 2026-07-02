@@ -2,8 +2,9 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbwEGlst8zJdzKQaQzMxzF7S
 let selectedSeats = [];
 let reservedSeats = [];
 
+// rowLayoutConfigs를 PDF 배치도와 동일하게 수정합니다.
 const rowLayoutConfigs = {
-    "1열": { offset: 0, aisles: [9, 19] },
+    "1열": { offset: 1, aisles: [9, 19] },
     "2열": { offset: 1, aisles: [9, 19] },
     "3열": { offset: 1, aisles: [9, 19] },
     "4열": { offset: 0, aisles: [10, 20] },
@@ -15,8 +16,18 @@ const rowLayoutConfigs = {
     "10열": { offset: 0, aisles: [10, 20] },
     "11열": { offset: 0, aisles: [10, 20] },
     "12열": { offset: 0, aisles: [10, 20] },
-    "13열": { offset: 3, aisles: [] }
+    "13열": { offset: 3, aisles: [] } // 12열의 4번 위치(오프셋 3)에 맞춤
 };
+
+// 13열은 좌석 중간에 통로가 있는 구조이므로, 
+// renderFloor 함수 내부의 13열 로직을 아래와 같이 반영하세요.
+if (row.row === "13열") {
+    // 1~3, (4~7 장애인), (통로), 10~19, (통로), (22~25 장애인), 26~29
+    // 좌석 번호 기준으로 통로 삽입
+    if (seatNum === 7 || seatNum === 19) {
+        seatsRow.appendChild(document.createElement("div")).className = "aisle-space";
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchReservedSeats();
