@@ -404,22 +404,3 @@ body {
         padding: 10px 0;
     }
     .booking-zone {
-        padding: 20px 15px;
-        align-items: flex-start; /* 가로 스크롤 시 정렬 기준선 보정 */
-    }
-    .stage {
-        margin-bottom: 30px;
-        max-width: 1050px; /* 좌석 가로폭과 일치시켜 스크롤 시 같이 움직이도록 설정 */
-    }
-    .modal-content {
-        padding: 20px 15px;
-        width: 95%;
-    }
-    .modal-booking-zone {
-        align-items: flex-start;
-    }
-    .modal-booking-zone .seating-container {
-        transform: none !important; /* 모달 내부 강제 축소 제거 */
-        margin-bottom: 0 !important;
-    }
-}
