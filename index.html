@@ -108,7 +108,7 @@
 </div>
 </header>
 <main class="flex-1 mt-16 flex overflow-hidden">
-<!-- Content Canvas (Removed Sidebar) -->
+<!-- Content Canvas -->
 <div class="flex-1 flex flex-col md:flex-row p-6 gap-6 overflow-hidden">
 <!-- Left: Seat Map Area -->
 <div class="flex-1 bg-white border border-outline-variant rounded-lg flex flex-col overflow-hidden shadow-sm">
@@ -146,7 +146,7 @@
 <!-- Seat Blocks -->
 <div class="flex gap-12 w-full justify-center">
 <!-- Rows Labels (Left) -->
-<div class="flex flex-col gap-[4px] pt-[2px] text-right pr-4">
+<div class="flex flex-col gap-[4px] pt-[28px] text-right pr-4">
 <span class="h-6 flex items-center font-label-sm text-on-surface-variant opacity-60">1열</span>
 <span class="h-6 flex items-center font-label-sm text-on-surface-variant opacity-60">2열</span>
 <span class="h-6 flex items-center font-label-sm text-on-surface-variant opacity-60">3열</span>
@@ -165,7 +165,7 @@
                                         for(let i=1; i<=60; i++) {
                                             const isReserved = [15, 16, 22, 23, 44].includes(i);
                                             const colorClass = isReserved ? 'bg-on-background/20 cursor-not-allowed' : 'bg-outline-variant hover:bg-primary-container hover:text-primary cursor-pointer';
-                                            document.write(`<div data-block="1" data-seat="${i}" class="seat-item w-6 h-6 rounded-sm ${colorClass} flex items-center justify-center font-label-sm text-[10px] transition-colors">${i}</div>`);
+                                            document.write(`<div data-block="왼쪽블록" data-seat="${i}" class="seat-item w-6 h-6 rounded-sm ${colorClass} flex items-center justify-center font-label-sm text-[10px] transition-colors">${i}</div>`);
                                         }
                                     </script>
 </div>
@@ -190,7 +190,7 @@
                                                 isReserved = true;
                                             }
                                             
-                                            document.write(`<div data-block="2" data-seat="${i}" data-accessible="${isAccessible}" data-reserved="${isReserved}" class="seat-item w-6 h-6 rounded-sm ${style} flex items-center justify-center font-label-sm text-[10px] transition-all">${content}</div>`);
+                                            document.write(`<div data-block="중앙블록" data-seat="${i}" data-accessible="${isAccessible}" data-reserved="${isReserved}" class="seat-item w-6 h-6 rounded-sm ${style} flex items-center justify-center font-label-sm text-[10px] transition-all">${content}</div>`);
                                         }
                                     </script>
 </div>
@@ -202,7 +202,7 @@
                                         for(let i=1; i<=60; i++) {
                                             const isReserved = [12, 13, 29, 30].includes(i);
                                             const colorClass = isReserved ? 'bg-on-background/20 cursor-not-allowed' : 'bg-outline-variant hover:bg-primary-container hover:text-primary cursor-pointer';
-                                            document.write(`<div class="seat-item data-block="3" data-seat="${i}" w-6 h-6 rounded-sm ${colorClass} flex items-center justify-center font-label-sm text-[10px] transition-colors">${i}</div>`);
+                                            document.write(`<div data-block="오른쪽블록" data-seat="${i}" class="seat-item w-6 h-6 rounded-sm ${colorClass} flex items-center justify-center font-label-sm text-[10px] transition-colors">${i}</div>`);
                                         }
                                     </script>
 </div>
@@ -273,10 +273,10 @@
                 return;
             }
 
-            const block = this.getAttribute('data-block') || "3";
-            const seatNum = this.getAttribute('data-seat') || this.innerText.trim();
+            const block = this.getAttribute('data-block');
+            const seatNum = this.getAttribute('data-seat');
             const isAccessible = this.getAttribute('data-accessible') === 'true';
-            const seatIdentifier = `${block}블록 ${seatNum}번`;
+            const seatIdentifier = `${block} ${seatNum}번`;
 
             const index = selectedSeats.indexOf(seatIdentifier);
 
@@ -290,7 +290,7 @@
                     this.classList.add('bg-outline-variant', 'hover:bg-primary-container', 'hover:text-primary');
                 }
             } else {
-                // Select (Max 5 limitation)
+                // Select (Max 5매 제한)
                 if (selectedSeats.length >= 5) {
                     alert('최대 5매까지만 선택 가능합니다.');
                     return;
